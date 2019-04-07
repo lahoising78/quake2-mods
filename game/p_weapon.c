@@ -760,6 +760,12 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 {
 	vec3_t	offset, start;
 	vec3_t	forward, right;
+	//==============mod===========
+	vec3_t	firstAngle = {0, 20, 0};
+	vec3_t	secondAngle = {0, -20, 0};
+	vec3_t	thirdAngle = { 20, 0, 0 };
+	//vec3_t	fourthAngle = { -20, 0, 0 };
+	//==============end===========
 	int		damage;
 	float	damage_radius;
 	int		radius_damage;
@@ -781,6 +787,24 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	
+
+	//===============mod================
+	VectorAdd(ent->client->v_angle, firstAngle, firstAngle);
+	AngleVectors(firstAngle, forward, right, NULL);
+	VectorScale(forward, -2, ent->client->kick_origin);
+	fire_rocket(ent, start, forward, damage, 50, damage_radius, radius_damage);
+	
+	VectorAdd(ent->client->v_angle, secondAngle, secondAngle);
+	AngleVectors(secondAngle, forward, right, NULL);
+	VectorScale(secondAngle, -2, ent->client->kick_origin);
+	fire_rocket(ent, start, forward, damage, 50, damage_radius, radius_damage);
+
+	VectorAdd(ent->client->v_angle, thirdAngle, thirdAngle);
+	AngleVectors(thirdAngle, forward, right, NULL);
+	VectorScale(thirdAngle, -2, ent->client->kick_origin);
+	fire_rocket(ent, start, forward, damage, 50, damage_radius, radius_damage);
+	//===============mod================
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);

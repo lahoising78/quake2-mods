@@ -570,6 +570,7 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 {
 	vec3_t		origin;
 	int			n;
+	vec3_t		dir;	//mod
 
 	if (other == ent->owner)
 		return;
@@ -613,6 +614,11 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 		gi.WriteByte (TE_ROCKET_EXPLOSION);
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PHS);
+	
+	//==============mod================
+	VectorSet(dir, -ent->movedir[0], -ent->movedir[1], -ent->movedir[2]);
+	if (ent->owner->client && ent->dmg <= (120 << 2)) fire_rocket(ent->owner, ent->s.origin, dir, ent->dmg * 2, 50, ent->dmg_radius, ent->radius_dmg);
+	//==============end================
 
 	G_FreeEdict (ent);
 }
