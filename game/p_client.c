@@ -1284,6 +1284,32 @@ void ClientBeginDeathmatch (edict_t *ent)
 	ClientEndServerFrame (ent);
 }
 
+//===================mod===============
+void sayHi(edict_t *ent)
+{
+	gi.cprintf(ent, PRINT_HIGH, "Calling sayHi function... Hi\n");
+}
+
+void IronSkin(edict_t *ent)
+{
+	int index;
+
+	gi.cprintf(ent, PRINT_HIGH, "Calling Iron Skin\n");
+	index = ArmorIndex(ent);
+	ent->client->pers.inventory[index] += 300;
+	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[index]);
+}
+
+void sayWhatUp(edict_t *ent)
+{
+	gi.cprintf(ent, PRINT_HIGH, "Calling sayWhatUp function... What Up\n");
+}
+
+void saySomething(edict_t *ent)
+{
+	gi.cprintf(ent, PRINT_HIGH, "Calling saySomething function... Something\n");
+}
+//===================end===============
 
 /*
 ===========
@@ -1347,6 +1373,14 @@ void ClientBegin (edict_t *ent)
 
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
+
+	//==================mod================
+	ent->client->firstAb = sayHi;
+	ent->client->secondAb = IronSkin;
+	ent->client->thirdAb = sayWhatUp;
+	ent->client->fourthAb = saySomething;
+
+	//==================end================
 }
 
 /*

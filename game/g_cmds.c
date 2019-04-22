@@ -899,6 +899,39 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+void Cmd_WarframeAb_f(edict_t *ent)
+{
+	char* s;
+	if (!ent) 
+	{
+		return;
+	} 
+	else if (!ent->client)
+	{
+		return;
+	}
+
+	s = gi.args();
+	gi.cprintf(ent, PRINT_HIGH, "Use %s warframe ability\n", s);
+
+	if ( Q_stricmp(s, "first") == 0) 
+	{
+		ent->client->firstAb(ent);
+	}
+	else if (Q_stricmp(s, "second") == 0)
+	{
+		ent->client->secondAb(ent);
+	}
+	else if (Q_stricmp(s, "third") == 0)
+	{
+		ent->client->thirdAb(ent);
+	}
+	else if (Q_stricmp(s, "fourth") == 0)
+	{
+		ent->client->fourthAb(ent);
+	}
+}
+
 
 /*
 =================
@@ -987,6 +1020,10 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	//==============mod=================
+	else if (Q_stricmp(cmd, "ability") == 0)
+		Cmd_WarframeAb_f(ent);
+	//==============end=================
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

@@ -959,6 +959,14 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	//===============mod=================
+	void(*firstAb)(edict_t *ent);
+	void(*secondAb)(edict_t *ent);
+	void(*thirdAb)(edict_t *ent);
+	void(*fourthAb)(edict_t *ent);
+
+	//===============end=================
 };
 
 
@@ -1109,5 +1117,7 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	
 };
 
