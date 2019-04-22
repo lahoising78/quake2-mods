@@ -1300,9 +1300,24 @@ void IronSkin(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[index]);
 }
 
-void sayWhatUp(edict_t *ent)
+void Roar(edict_t *ent)
 {
-	gi.cprintf(ent, PRINT_HIGH, "Calling sayWhatUp function... What Up\n");
+	int			index;
+	gitem_t		*it;
+	
+	gi.cprintf(ent, PRINT_HIGH, "Calling Roar\n");
+
+	it = FindItem("quad damage");
+	if (!it) 
+	{
+		return;
+	}
+	if (!it->use)
+	{
+		return;
+	}
+
+	it->use(ent, it);
 }
 
 void saySomething(edict_t *ent)
@@ -1377,7 +1392,7 @@ void ClientBegin (edict_t *ent)
 	//==================mod================
 	ent->client->firstAb = sayHi;
 	ent->client->secondAb = IronSkin;
-	ent->client->thirdAb = sayWhatUp;
+	ent->client->thirdAb = Roar;
 	ent->client->fourthAb = saySomething;
 
 	//==================end================
