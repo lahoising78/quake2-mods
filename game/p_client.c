@@ -1320,9 +1320,32 @@ void Roar(edict_t *ent)
 	it->use(ent, it);
 }
 
-void saySomething(edict_t *ent)
+void RhinoStomp(edict_t *self)
 {
-	gi.cprintf(ent, PRINT_HIGH, "Calling saySomething function... Something\n");
+	int count = 0;
+	edict_t *mob = NULL;
+	vec3_t knockback = {0,0,30};
+	
+	gi.cprintf(self, PRINT_HIGH, "Calling Rhino Stomp\n");
+
+	while ((mob = findradius(mob, self->s.origin, 256)) != NULL) {
+		if (mob == self) continue;
+		if (mob == self->owner) continue;
+		if (!self->takedamage) continue;
+		if (!(mob->svflags & SVF_MONSTER) && (!mob->client) && (strcmp(mob->classname, "misc_explobox") != 0))
+			continue;
+
+		//if (ent->team == mob->team) continue;
+		if (CanDamage(mob, self)) {
+			count++;
+			if (mob->nextthink) {
+				VectorAdd(mob->s.origin, knockback, mob->s.origin);
+				mob->nextthink = level.time + 5;
+			}
+		}
+	}
+
+	gi.cprintf(self, PRINT_HIGH, "body count: %d", count);
 }
 //===================end===============
 
@@ -1393,7 +1416,7 @@ void ClientBegin (edict_t *ent)
 	ent->client->firstAb = sayHi;
 	ent->client->secondAb = IronSkin;
 	ent->client->thirdAb = Roar;
-	ent->client->fourthAb = saySomething;
+	ent->client->fourthAb = RhinoStomp;
 
 	//==================end================
 }
