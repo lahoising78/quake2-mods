@@ -1292,20 +1292,36 @@ void sayHi(edict_t *ent)
 
 void IronSkin(edict_t *ent)
 {
-	int index;
+	//int index;
+	gitem_t		*it;
+	gitem_armor_t	*info;
 
 	gi.cprintf(ent, PRINT_HIGH, "Calling Iron Skin\n");
-	index = ArmorIndex(ent);
-	ent->client->pers.inventory[index] += 300;
-	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[index]);
+	//index = ArmorIndex(ent);
+	//ent->client->pers.inventory[index] += 300;
+
+	/*it = FindItem("Jacket Armor");
+	ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
+
+	it = FindItem("Combat Armor");
+	ent->client->pers.inventory[ITEM_INDEX(it)] = 0;*/
+
+	it = FindItem("Body Armor");
+	if (ent->client->pers.inventory[ITEM_INDEX(it)]) return;
+	info = (gitem_armor_t *)it->info;
+	ent->client->pers.inventory[ITEM_INDEX(it)] = 300;	// info->max_count;
+
+	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[ITEM_INDEX(it)]);
 }
 
-void Roar(edict_t *ent)
+void Roar(edict_t *self)
 {
 	int			index;
 	gitem_t		*it;
 	
-	gi.cprintf(ent, PRINT_HIGH, "Calling Roar\n");
+	gi.cprintf(self, PRINT_HIGH, "Calling Roar\n");
+
+	if (self->client->quad_framenum > level.framenum) return;
 
 	it = FindItem("quad damage");
 	if (!it) 
@@ -1317,7 +1333,7 @@ void Roar(edict_t *ent)
 		return;
 	}
 
-	it->use(ent, it);
+	it->use(self, it);
 }
 
 void RhinoStomp(edict_t *self)
