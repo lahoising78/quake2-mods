@@ -1285,20 +1285,71 @@ void ClientBeginDeathmatch (edict_t *ent)
 }
 
 //===================mod===============
-void sayHi(edict_t *ent)
+
+//****************************
+//		  RHINO START
+//****************************
+void RChargeThink(edict_t *self) 
 {
-	gi.cprintf(ent, PRINT_HIGH, "Calling sayHi function... Hi\n");
+	gclient_t *client = self->client;
+	pmove_t	pm;
+	vec3_t	forward;
+	vec3_t ffd = {0,0,0};
+	vec3_t p_top, p_btm, e_top, e_btm;
+	edict_t *ent, *ground;
+	//vec3_t	*origin = self->s.origin;
+	
+	gi.cprintf(self, PRINT_HIGH, "In RChargeThink\n");
+	client->charge_framenum++;
+	T_RadiusDamage(self, self, 30, self, 100, 0);
+	/*AngleVectors(client->v_angle, forward, NULL, NULL);
+	ground = self->groundentity;
+	if (ground) {
+		AngleVectors(self->groundentity->s.angles, ffd, NULL, NULL);
+		forward[2] = ffd[2];
+		//VectorAdd(ground->s.origin, ground->absmax, e_top);
+		//VectorAdd(ground->s.origin, ground->absmax, e_btm);
+	}
+	VectorScale(forward, 5, forward);
+
+	//VectorAdd(self->s.origin, self->absmax, p_top);
+	//VectorAdd(self->s.origin, self->absmin, p_btm);
+	
+	VectorAdd(self->s.origin, forward, self->s.origin);
+	/*if (ground)
+	{
+		if ( (VectorCompare(p_top, e_top) < 0 && VectorCompare(p_top, e_btm) > 0) ||
+			 (VectorCompare(p_btm, e_top) < 0 && VectorCompare(p_btm, e_btm) > 0))
+		{
+			VectorSubtract(self->s.origin, forward, self->s.origin);
+		}
+	}*/
+
+	if (self->client->charge_framenum >= 50) {
+		globals.ClientThink = self->client->previous_think;
+		VectorSet(self->velocity, 0, 0, 0);
+	}
+}
+
+void RhinoCharge(edict_t *self)
+{
+	vec3_t forward, right;
+	gclient_t *client = self->client;
+	gi.cprintf(self, PRINT_HIGH, "Calling Rhino Charge\n");
+	//self->client->previous_think = globals.ClientThink;
+	//globals.ClientThink = RChargeThink;
+	//self->client->charge_framenum = 0;
+	AngleVectors(client->v_angle, forward, right, NULL);
+	VectorScale(forward, 1000, forward);
+	VectorAdd(self->velocity, forward, self->velocity);
 }
 
 void IronSkin(edict_t *ent)
 {
-	//int index;
 	gitem_t		*it;
 	gitem_armor_t	*info;
 
 	gi.cprintf(ent, PRINT_HIGH, "Calling Iron Skin\n");
-	//index = ArmorIndex(ent);
-	//ent->client->pers.inventory[index] += 300;
 
 	/*it = FindItem("Jacket Armor");
 	ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
@@ -1361,7 +1412,40 @@ void RhinoStomp(edict_t *self)
 		}
 	}
 
-	gi.cprintf(self, PRINT_HIGH, "body count: %d", count);
+	gi.cprintf(self, PRINT_HIGH, "body count: %d\n", count);
+}
+
+//****************************
+//		  NOVA START
+//****************************
+void NullStar(edict_t *self) 
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Null Star\n");
+}
+
+//******************************
+//		SELECT WARFRAME
+//******************************
+void SelectWarframe(edict_t *self)
+{
+	gclient_t *cl = self->client;
+	
+	if (skill->value == 0) //easy
+	{
+		//use rhino
+		cl->firstAb = RhinoCharge;
+		cl->secondAb = IronSkin;
+		cl->thirdAb = Roar;
+		cl->fourthAb = RhinoStomp;
+	}
+	else if (skill->value == 1) //medium
+	{
+		//use nova
+		cl->firstAb = NullStar;
+		//cl->secondAb = IronSkin;
+		//cl->thirdAb = Roar;
+		//cl->fourthAb = RhinoStomp;
+	}
 }
 //===================end===============
 
@@ -1429,11 +1513,7 @@ void ClientBegin (edict_t *ent)
 	ClientEndServerFrame (ent);
 
 	//==================mod================
-	ent->client->firstAb = sayHi;
-	ent->client->secondAb = IronSkin;
-	ent->client->thirdAb = Roar;
-	ent->client->fourthAb = RhinoStomp;
-
+	SelectWarframe(ent);
 	//==================end================
 }
 

@@ -965,7 +965,9 @@ struct gclient_s
 	void(*secondAb)(edict_t *ent);
 	void(*thirdAb)(edict_t *ent);
 	void(*fourthAb)(edict_t *ent);
-
+	void(*previous_think)(edict_t *ent, usercmd_t *ucmd);
+	int charge_framenum;
+	//int select_warframe;
 	//===============end=================
 };
 

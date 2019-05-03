@@ -916,19 +916,23 @@ void Cmd_WarframeAb_f(edict_t *ent)
 
 	if ( Q_stricmp(s, "first") == 0) 
 	{
-		ent->client->firstAb(ent);
+		if (ent->client->firstAb)
+			ent->client->firstAb(ent);
 	}
 	else if (Q_stricmp(s, "second") == 0)
 	{
-		ent->client->secondAb(ent);
+		if (ent->client->secondAb)
+			ent->client->secondAb(ent);
 	}
 	else if (Q_stricmp(s, "third") == 0)
 	{
-		ent->client->thirdAb(ent);
+		if (ent->client->thirdAb)
+			ent->client->thirdAb(ent);
 	}
 	else if (Q_stricmp(s, "fourth") == 0)
 	{
-		ent->client->fourthAb(ent);
+		if (ent->client->fourthAb)
+			ent->client->fourthAb(ent);
 	}
 }
 
