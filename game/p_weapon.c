@@ -1464,6 +1464,9 @@ void Shock_Fire(edict_t *ent)
 		already_hit[hit] = tr.ent;
 		hit++;
 		other = tr.ent;
+		//other->prev_think = other->think;
+		//other->think = damage_over_time;
+		damage_over_time(other);
 		while ( (tar = findradius(tar, other->s.origin, 400)) != NULL )  
 		{
 			//check stuff
@@ -1481,6 +1484,9 @@ void Shock_Fire(edict_t *ent)
 			VectorSubtract(tar->s.origin, other->s.origin, aimdir);
 			VectorNormalize(aimdir);
 			fire_bullet(other, other->s.origin, aimdir, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
+			//tar->prev_think = tar->think;
+			//tar->think = damage_over_time;
+			damage_over_time(tar);
 
 			//set up for the next target
 			other = tar;
