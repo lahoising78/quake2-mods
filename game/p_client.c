@@ -1398,7 +1398,7 @@ void RhinoStomp(edict_t *self)
 	while ((mob = findradius(mob, self->s.origin, 256)) != NULL) {
 		if (mob == self) continue;
 		if (mob == self->owner) continue;
-		if (!self->takedamage) continue;
+		if (!mob->takedamage) continue;
 		if (!(mob->svflags & SVF_MONSTER) && (!mob->client) && (strcmp(mob->classname, "misc_explobox") != 0))
 			continue;
 
@@ -1423,6 +1423,44 @@ void NullStar(edict_t *self)
 	gi.cprintf(self, PRINT_HIGH, "Calling Null Star\n");
 }
 
+void AntimatterDrop(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Antimatter Drop\n");
+}
+
+void WormHole(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Worm Hole\n");
+}
+
+void MolecularPrime(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Molecular Prime\n");
+}
+
+//*******************
+//		VOLT
+//*******************
+void Shock(edict_t *self)
+{
+	Shock_Fire(self);
+}
+
+void Speed(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Speed\n");
+}
+
+void ElectricShield(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Electric Shield\n");
+}
+
+void Discharge(edict_t *self)
+{
+	gi.cprintf(self, PRINT_HIGH, "Calling Discharge\n");
+}
+
 //******************************
 //		SELECT WARFRAME
 //******************************
@@ -1442,9 +1480,17 @@ void SelectWarframe(edict_t *self)
 	{
 		//use nova
 		cl->firstAb = NullStar;
-		//cl->secondAb = IronSkin;
-		//cl->thirdAb = Roar;
-		//cl->fourthAb = RhinoStomp;
+		cl->secondAb = AntimatterDrop;
+		cl->thirdAb = WormHole;
+		cl->fourthAb = MolecularPrime;
+	}
+	else if (skill->value > 1) //hard || hard+
+	{
+		//use volt
+		cl->firstAb = Shock;
+		cl->secondAb = Speed;
+		cl->thirdAb = ElectricShield;
+		cl->fourthAb = Discharge;
 	}
 }
 //===================end===============

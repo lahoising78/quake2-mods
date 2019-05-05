@@ -1430,5 +1430,75 @@ void Weapon_BFG (edict_t *ent)
 	Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_bfg_fire);
 }
 
+//=====================mod==================
+void Shock_Fire(edict_t *ent) 
+{
+	int hit = 0;
+	int i = 0;
+	trace_t tr;
+	vec3_t start, end;
+	vec3_t forward, right;
+	vec3_t angles;
+	int damage = 8;
+	int kick = 2;
+	vec3_t offset;
+	vec3_t aimdir;
+	edict_t *tar, *other;
+	edict_t *already_hit[10];
+	
+	gi.cprintf(ent, PRINT_HIGH, "Calling Shock Fire\n");
+
+	if (!ent) return;
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+
+	VectorAdd(ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors(angles, forward, right, NULL);
+	VectorSet(offset, 0, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
+	
+	VectorMA(start, 8192, forward, end);
+	tr = gi.trace(ent->s.origin, NULL, NULL, end, ent, MASK_SHOT | MASK_WATER);
+	if (tr.ent && tr.ent->takedamage) {
+		already_hit[hit] = tr.ent;
+		hit++;
+		other = tr.ent;
+		while ( (tar = findradius(tar, other->s.origin, 400)) != NULL )  
+		{
+			//check stuff
+			if (tar == other) continue;
+			if (!tar->takedamage) continue;
+			if (!(tar->svflags & SVF_MONSTER) && (!tar->client) && (strcmp(tar->classname, "misc_explobox") != 0))
+				continue;
+			for (i = 0; i < hit; i++)
+			{
+				if (tar == already_hit[i]) continue;
+			}
+
+			//fire bullet
+			gi.cprintf(ent, PRINT_HIGH, "%s\n", tar->targetname);
+			VectorSubtract(tar->s.origin, other->s.origin, aimdir);
+			VectorNormalize(aimdir);
+			fire_bullet(other, other->s.origin, aimdir, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
+
+			//set up for the next target
+			other = tar;
+			if (hit < 10) 
+			{
+				already_hit[hit] = tar;
+				hit++;
+			}
+			else 
+			{
+				break;
+			}
+		}
+	}
+
+	gi.cprintf(ent, PRINT_HIGH, "body count: %d\n", hit);
+}
+//=====================end==================
+
 
 //======================================================================
