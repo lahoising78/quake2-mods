@@ -1300,7 +1300,7 @@ void RChargeThink(edict_t *self)
 	//vec3_t	*origin = self->s.origin;
 	
 	gi.cprintf(self, PRINT_HIGH, "In RChargeThink\n");
-	client->charge_framenum++;
+	client->wf_frame[0]++;
 	T_RadiusDamage(self, self, 30, self, 100, 0);
 	/*AngleVectors(client->v_angle, forward, NULL, NULL);
 	ground = self->groundentity;
@@ -1325,7 +1325,7 @@ void RChargeThink(edict_t *self)
 		}
 	}*/
 
-	if (self->client->charge_framenum >= 50) {
+	if (self->client->wf_frame[0] >= 50) {
 		globals.ClientThink = self->client->previous_think;
 		VectorSet(self->velocity, 0, 0, 0);
 	}
@@ -1339,6 +1339,7 @@ void RhinoCharge(edict_t *self)
 	//self->client->previous_think = globals.ClientThink;
 	//globals.ClientThink = RChargeThink;
 	//self->client->charge_framenum = 0;
+	client->wf_frame[0] = 0;
 	AngleVectors(client->v_angle, forward, right, NULL);
 	VectorScale(forward, 1000, forward);
 	VectorAdd(self->velocity, forward, self->velocity);
@@ -1393,7 +1394,8 @@ void RhinoStomp(edict_t *self)
 	edict_t *mob = NULL;
 	vec3_t knockback = {0,0,30};
 	
-	gi.cprintf(self, PRINT_HIGH, "Calling Rhino Stomp\n");
+	if (self->client->firstAb == RhinoCharge) gi.cprintf(self, PRINT_HIGH, "Calling Rhino Stomp\n");
+	else gi.cprintf(self, PRINT_HIGH, "Calling Discharge\n");
 
 	while ((mob = findradius(mob, self->s.origin, 256)) != NULL) {
 		if (mob == self) continue;
@@ -1406,7 +1408,7 @@ void RhinoStomp(edict_t *self)
 		if (CanDamage(mob, self)) {
 			count++;
 			if (mob->nextthink) {
-				VectorAdd(mob->s.origin, knockback, mob->s.origin);
+				if (self->client->firstAb == RhinoCharge) VectorAdd(mob->s.origin, knockback, mob->s.origin);
 				mob->nextthink = level.time + 5;
 			}
 		}
@@ -1446,14 +1448,16 @@ void Shock(edict_t *self)
 	Shock_Fire(self);
 }
 
-void Speed(edict_t *self)
+void Invisibility(edict_t *self)
 {
+	
 	gi.cprintf(self, PRINT_HIGH, "Calling Speed\n");
+	self->client->invisible = ~self->client->invisible;
 }
 
 void ElectricShield(edict_t *self)
 {
-	gi.cprintf(self, PRINT_HIGH, "Calling Electric Shield\n");
+	Oberon_Fire(self);
 }
 
 void Discharge(edict_t *self)
@@ -1467,7 +1471,15 @@ void Discharge(edict_t *self)
 void SelectWarframe(edict_t *self)
 {
 	gclient_t *cl = self->client;
-	
+	int i;
+	cl->speed = 1;
+	cl->invisible = 0;
+
+	for (i = 0; i < 4; i++)
+	{
+		cl->wf_frame[i] = 0;
+	}
+
 	if (skill->value == 0) //easy
 	{
 		//use rhino
@@ -1488,9 +1500,9 @@ void SelectWarframe(edict_t *self)
 	{
 		//use volt
 		cl->firstAb = Shock;
-		cl->secondAb = Speed;
+		cl->secondAb = Invisibility;
 		cl->thirdAb = ElectricShield;
-		cl->fourthAb = Discharge;
+		cl->fourthAb = RhinoStomp;
 	}
 }
 //===================end===============
@@ -1790,6 +1802,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	level.current_entity = ent;
 	client = ent->client;
+	ent->speed *= client->speed;
 
 	if (level.intermissiontime)
 	{

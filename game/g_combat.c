@@ -576,11 +576,11 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 }
 
 //==============mod===================
-void damage_over_time(edict_t *self) 
+void electric_damage(edict_t *self) 
 {
 	if (!self) return;
 
-	self->health -= 50;
+	self->health -= 20;
 
 	if (self->health <= 0)
 	{

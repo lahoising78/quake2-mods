@@ -1456,17 +1456,15 @@ void Shock_Fire(edict_t *ent)
 	AngleVectors(angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight - 8);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
+	fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, DAMAGE_BULLET);
 	
 	VectorMA(start, 8192, forward, end);
-	tr = gi.trace(ent->s.origin, NULL, NULL, end, ent, MASK_SHOT | MASK_WATER);
+	tr = gi.trace(ent->s.origin, NULL, NULL, end, ent, CONTENTS_MONSTER);
 	if (tr.ent && tr.ent->takedamage) {
 		already_hit[hit] = tr.ent;
 		hit++;
 		other = tr.ent;
-		//other->prev_think = other->think;
-		//other->think = damage_over_time;
-		damage_over_time(other);
+		electric_damage(other);
 		while ( (tar = findradius(tar, other->s.origin, 400)) != NULL )  
 		{
 			//check stuff
@@ -1484,9 +1482,13 @@ void Shock_Fire(edict_t *ent)
 			VectorSubtract(tar->s.origin, other->s.origin, aimdir);
 			VectorNormalize(aimdir);
 			fire_bullet(other, other->s.origin, aimdir, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
-			//tar->prev_think = tar->think;
-			//tar->think = damage_over_time;
-			damage_over_time(tar);
+			electric_damage(tar);
+
+			gi.WriteByte(svc_temp_entity);
+			gi.WriteByte(TE_BFG_LASER);
+			gi.WritePosition(other->s.origin);
+			gi.WritePosition(tar->s.origin);
+			gi.multicast(other->s.origin, MULTICAST_PHS);
 
 			//set up for the next target
 			other = tar;
@@ -1502,7 +1504,77 @@ void Shock_Fire(edict_t *ent)
 		}
 	}
 
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BFG_LASER);
+	gi.WritePosition(ent->s.origin);
+	gi.WritePosition(tr.endpos);
+	gi.multicast(ent->s.origin, MULTICAST_PHS);
+
 	gi.cprintf(ent, PRINT_HIGH, "body count: %d\n", hit);
+}
+
+void Oberon_Fire(edict_t *self)
+{
+	trace_t	tr;
+	vec3_t	start, end;
+	vec3_t	forward, right;
+	vec3_t	offset;
+	vec3_t	angles;
+	edict_t	*ent, *other;
+	int count;
+	gi.cprintf(self, PRINT_HIGH, "Calling Oberon Fire\n");
+
+	AngleVectors(self->client->v_angle, forward, NULL, NULL);
+	VectorAdd(self->client->v_angle, self->client->kick_angles, angles);
+	AngleVectors(angles, forward, right, NULL);
+	VectorSet(offset, 0, 8, self->viewheight - 8);
+	P_ProjectSource(self->client, self->s.origin, offset, forward, right, start);
+	VectorMA(start, 8192, forward, end);
+
+	tr = gi.trace(self->s.origin, NULL, NULL, end, self, CONTENTS_MONSTER);
+	if (!(tr.ent && tr.ent->takedamage))
+	{
+		return;
+	}
+		
+	other = tr.ent;
+	if (!(other->svflags & SVF_MONSTER) && (!other->client) && (strcmp(other->classname, "misc_explobox") != 0))
+		return;
+	T_Damage(other, self, self, forward, tr.endpos, vec3_origin, 1, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
+	other->radiation = true;
+	FindTarget(other);
+
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BFG_LASER);
+	gi.WritePosition(self->s.origin);
+	gi.WritePosition(tr.endpos);
+	gi.multicast(self->s.origin, MULTICAST_PHS);
+
+	count = 0;
+	while ( (ent = findradius(ent, other->s.origin, 10000)) != NULL )
+	{
+		if (ent == self) continue;
+		if (ent == other) continue;
+		if (!ent->takedamage) continue;
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+		if (count >= 10) break;
+
+		tr = gi.trace(other->s.origin, NULL, NULL, ent, other, CONTENTS_MONSTER);
+		count++;
+		VectorSubtract(ent->s.origin, other->s.origin, forward);
+		T_Damage(ent, self, self, forward, tr.endpos, vec3_origin, 1, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
+		ent->radiation = true;
+		FindTarget(ent);
+
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		gi.WritePosition(other->s.origin);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(other->s.origin, MULTICAST_PHS);
+	}	
+
+	
 }
 //=====================end==================
 

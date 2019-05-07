@@ -290,6 +290,8 @@ qboolean visible (edict_t *self, edict_t *other)
 	vec3_t	spot2;
 	trace_t	trace;
 
+	if (other->client && other->client->invisible) return false;
+
 	VectorCopy (self->s.origin, spot1);
 	spot1[2] += self->viewheight;
 	VectorCopy (other->s.origin, spot2);
@@ -386,6 +388,39 @@ void FoundTarget (edict_t *self)
 	self->monsterinfo.run (self);
 }
 
+//=========================mod=====================
+edict_t *FindMonster(edict_t *self)
+{
+	edict_t	*ent = NULL;
+	edict_t	*best = NULL;
+
+	while ((ent = findradius(ent, self->s.origin, 1024)) != NULL)
+	{
+		if (ent == self)
+			continue;
+		if (!(ent->svflags & SVF_MONSTER))
+			continue;
+		if (!ent->health)
+			continue;
+		if (ent->health < 1)
+			continue;
+		if (!visible(self, ent))
+			continue;
+		if (ent->client)
+			continue;
+		if (!best)
+		{
+			best = ent;
+			continue;
+		}
+		if (ent->max_health <= best->max_health)
+			continue;
+		best = ent;
+	}
+
+	return best;
+}
+//=========================end=====================
 
 /*
 ===========
@@ -409,6 +444,7 @@ qboolean FindTarget (edict_t *self)
 	edict_t		*client;
 	qboolean	heardit;
 	int			r;
+	edict_t		*monster;	//====mod====
 
 	if (self->monsterinfo.aiflags & AI_GOOD_GUY)
 	{
@@ -421,6 +457,17 @@ qboolean FindTarget (edict_t *self)
 		//FIXME look for monsters?
 		return false;
 	}
+
+	//============mod============
+	monster = FindMonster(self);
+	if (monster && self->radiation)
+	{
+		self->enemy = monster;
+		FoundTarget(self);
+		self->radiation = false;
+		return true;
+	}
+	//============end============
 
 	// if we're going to a combat point, just proceed
 	if (self->monsterinfo.aiflags & AI_COMBAT_POINT)
@@ -574,6 +621,12 @@ qboolean FindTarget (edict_t *self)
 //
 // got one
 //
+	if (client == self->enemy && self->radiation)
+	{
+		self->enemy = NULL;
+		self->radiation = false;
+		return false;
+	}
 	FoundTarget (self);
 
 	if (!(self->monsterinfo.aiflags & AI_SOUND_TARGET) && (self->monsterinfo.sight))

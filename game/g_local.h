@@ -656,7 +656,7 @@ qboolean CanDamage (edict_t *targ, edict_t *inflictor);
 void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod);
 void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod);
 //==============mod============
-void damage_over_time(edict_t *ent);
+void electric_damage(edict_t *ent);
 //==============end============
 
 // damage flags
@@ -969,7 +969,9 @@ struct gclient_s
 	void(*thirdAb)(edict_t *ent);
 	void(*fourthAb)(edict_t *ent);
 	void(*previous_think)(edict_t *ent, usercmd_t *ucmd);
-	int charge_framenum;
+	int wf_frame[4];
+	int speed;
+	int invisible;
 	//int select_warframe;
 	//===============end=================
 };
@@ -1123,8 +1125,9 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 
-	//======mod=====
-	void(*prev_think)(edict_t *ent);
-	//======end=====
+	//==========mod=========
+	qboolean	radiation;
+	//==========end==========
+
 };
 
