@@ -1558,7 +1558,7 @@ void Oberon_Fire(edict_t *self)
 		if (!ent->takedamage) continue;
 		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
 			continue;
-		if (count >= 10) break;
+		if (count >= 3) break;
 
 		tr = gi.trace(other->s.origin, NULL, NULL, ent, other, CONTENTS_MONSTER);
 		count++;

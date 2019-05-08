@@ -899,6 +899,7 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+//==================mod===================
 void Cmd_WarframeAb_f(edict_t *ent)
 {
 	char* s;
@@ -936,6 +937,76 @@ void Cmd_WarframeAb_f(edict_t *ent)
 	}
 }
 
+void Cmd_Toggle_Mods_Menu(edict_t *ent)
+{
+	int			i;
+	gclient_t	*cl;
+	char		str[1024];
+	gitem_t		*it = NULL;
+
+	if (!(ent && ent->client)) return;
+
+	cl = ent->client;
+	it = FindItem("Warframe Mod");
+	//cl->pers.inventory[ITEM_INDEX(it)]++;
+	//gi.cprintf(ent, PRINT_HIGH, "you have %d wf mods\n", cl->pers.inventory[ITEM_INDEX(it)]);
+
+	SelectNextItem(ent, IT_WF_MOD);
+	if (cl->pers.selected_item > -1) it = &itemlist[cl->pers.selected_item];
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Could not find a valid item\n");
+		return;
+	}
+	//gi.cprintf(ent, PRINT_HIGH, "Found %s\n", it->pickup_name);
+
+	cl->showinventory = false;
+	//cl->showhelp = false;
+	cl->showscores = false;
+
+	if (cl->showhelp)
+	{
+		cl->showhelp = false;
+		return;
+	}
+
+	cl->showhelp = true;
+
+	Com_sprintf(str, sizeof(str), 
+		"xv 32 yv 8 picn help "
+		"xv 32 yv 8 string2 \"hola this is a string\" ");
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(str);
+	gi.unicast(ent, true);
+}
+
+void Cmd_Use_Wf_Mod(edict_t *ent)
+{
+	gitem_t		*it;
+	gclient_t	*cl;
+
+	if (!(ent && ent->client)) return;
+	//gi.cprintf(ent, PRINT_HIGH, "Calling command to use warframe mod\n");
+
+	cl = ent->client;
+	if (!cl->showhelp) return;
+	//if (cl->pers.selected_item < 0) SelectNextItem(ent, IT_WF_MOD);
+	it = FindItem("Warframe Mod");
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item is not valid\n");
+		return;
+	}
+	if (!it->use)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Cannot use item");
+	}
+
+	it->use(ent, it);
+}
+
+//================end===================
 
 /*
 =================
@@ -1027,6 +1098,10 @@ void ClientCommand (edict_t *ent)
 	//==============mod=================
 	else if (Q_stricmp(cmd, "ability") == 0)
 		Cmd_WarframeAb_f(ent);
+	else if (Q_stricmp(cmd, "togglemods") == 0)
+		Cmd_Toggle_Mods_Menu(ent);
+	else if (Q_stricmp(cmd, "usemod") == 0)
+		Cmd_Use_Wf_Mod(ent);
 	//==============end=================
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);

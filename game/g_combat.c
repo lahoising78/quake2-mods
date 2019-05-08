@@ -91,6 +91,9 @@ Killed
 */
 void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
+	//vec3_t forward = {0, 0, 0};
+	gitem_t	*it;
+
 	if (targ->health < -999)
 		targ->health = -999;
 
@@ -123,6 +126,26 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 	}
 
 	targ->die (targ, inflictor, attacker, damage, point);
+	
+	//==============mod=============
+	if (!(attacker && attacker->client))
+		return;
+	//AngleVectors(attacker->client->v_angle, forward, NULL, NULL);
+	//fire_bfg(targ, targ->s.origin, forward, damage, 400, 1024);
+	it = FindItem("Warframe Mod");
+	if (!it)
+	{
+		gi.cprintf(attacker, PRINT_HIGH, "Did not find a valid item\n");
+		return;
+	}
+	gi.cprintf(attacker, PRINT_HIGH, "found a %s\n", it->pickup_name);
+	if (!it->drop)
+	{
+		gi.cprintf(attacker, PRINT_HIGH, "cannot drop this item\n");
+		return;
+	}
+	it->drop(targ, it);
+	//==============end=============
 }
 
 

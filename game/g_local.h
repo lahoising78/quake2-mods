@@ -217,6 +217,9 @@ typedef struct
 #define IT_STAY_COOP	8
 #define IT_KEY			16
 #define IT_POWERUP		32
+//===========mod============
+#define IT_WF_MOD		64
+//===========end============
 
 // gitem_t->weapmodel for weapons indicates model index
 #define WEAP_BLASTER			1 
@@ -895,6 +898,9 @@ struct gclient_s
 	qboolean	showinventory;		// set layout stat
 	qboolean	showhelp;
 	qboolean	showhelpicon;
+	//=========mod========
+	qboolean	showmods;
+	//=========end=========
 
 	int			ammo_index;
 

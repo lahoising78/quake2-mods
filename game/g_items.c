@@ -1131,6 +1131,24 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
+//=============mod=============
+qboolean Pickup_Warframe_Mod(edict_t *ent, edict_t *other)
+{
+
+	if (!ent || !other) return false;
+
+	gi.cprintf(other, PRINT_LOW, "picking up mod");
+	return true;
+}
+
+void Use_Wf_Mod(edict_t *ent, gitem_t *item)
+{
+	if (!(ent && ent->client)) return;
+	
+	gi.cprintf(ent, PRINT_HIGH, "You have atempted to use a warframe mod\n");
+}
+//=============end=============
+
 gitem_t	itemlist[] = 
 {
 	{
@@ -2110,6 +2128,30 @@ tank commander's head
 		0,
 /* precache */ "items/s_health.wav items/n_health.wav items/l_health.wav items/m_health.wav"
 	},
+
+	//==========mod============
+	//item for warframe MODS :3
+	{
+		"warframe_mod",
+		Pickup_Warframe_Mod,
+		Use_Wf_Mod,
+		Drop_Item,
+		NULL,
+		"misc/ar1_pkup.wav",
+		"models/items/armor/body/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"i_health",
+		/* pickup */	"Warframe Mod",
+		/* width */		3,
+		0,
+		NULL,
+		IT_WF_MOD,
+		0,
+		NULL,
+		0,
+		/* precache */ ""
+	},
+	//==========end============
 
 	// end of list marker
 	{NULL}
