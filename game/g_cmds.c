@@ -937,22 +937,40 @@ void Cmd_WarframeAb_f(edict_t *ent)
 	}
 }
 
-void Cmd_Toggle_Mods_Menu(edict_t *ent)
+void Cmd_Toggle_Mods_Menu(edict_t *ent, qboolean toggle)
 {
-	int			i;
+	int			mods[4];
+	int			i, index;
 	gclient_t	*cl;
 	char		str[1024];
+	char		selector[] = {'-','-','-','-'};
 	gitem_t		*it = NULL;
 
 	if (!(ent && ent->client)) return;
 
 	cl = ent->client;
-	it = FindItem("Warframe Mod");
+
+	it = FindItem("Intensify");
+	index = ITEM_INDEX(it);
 	//cl->pers.inventory[ITEM_INDEX(it)]++;
+	for (i = 0; i < 4; i++)
+	{
+		//it = FindItem("Intensify");
+		if (index > MAX_ITEMS || !(itemlist[index].flags & IT_WF_MOD))
+		{
+			mods[i] = 0;
+			break;
+		}
+		mods[i] = cl->pers.inventory[index];
+		if (mods[i] > 99) mods[i] = 99;
+		index++;
+	}
 	//gi.cprintf(ent, PRINT_HIGH, "you have %d wf mods\n", cl->pers.inventory[ITEM_INDEX(it)]);
 
-	SelectNextItem(ent, IT_WF_MOD);
+	if (toggle) SelectNextItem(ent, IT_WF_MOD);
 	if (cl->pers.selected_item > -1) it = &itemlist[cl->pers.selected_item];
+	selector[cl->pers.selected_item % 4] = '*';
+	gi.cprintf(ent, PRINT_HIGH, "Item selected: %d\n", cl->pers.selected_item);
 	if (!it)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Could not find a valid item\n");
@@ -961,10 +979,9 @@ void Cmd_Toggle_Mods_Menu(edict_t *ent)
 	//gi.cprintf(ent, PRINT_HIGH, "Found %s\n", it->pickup_name);
 
 	cl->showinventory = false;
-	//cl->showhelp = false;
 	cl->showscores = false;
 
-	if (cl->showhelp)
+	if (toggle && cl->showhelp)
 	{
 		cl->showhelp = false;
 		return;
@@ -972,9 +989,17 @@ void Cmd_Toggle_Mods_Menu(edict_t *ent)
 
 	cl->showhelp = true;
 
-	Com_sprintf(str, sizeof(str), 
-		"xv 32 yv 8 picn help "
-		"xv 32 yv 8 string2 \"hola this is a string\" ");
+	Com_sprintf(str, sizeof(str),
+		"xv 32 yv 8 picn inventory "
+		"xv 56 yv 32 string2 \" NAME       ## DESCRIPTION\" "
+		"xv 56 yv 48 string2 \"%cIntensify  %d%d +strength\" "
+		"xv 56 yv 56 string2 \"%cStretch    %d%d +range \" "
+		"xv 56 yv 64 string2 \"%cFlow       %d%d +energy \" "
+		"xv 56 yv 72 string2 \"%cContinuity %d%d +duration\" ",
+		selector[0], mods[0] / 10, mods[0] % 10,
+		selector[1], mods[1] / 10, mods[1] % 10,
+		selector[2], mods[2] / 10, mods[2] % 10,
+		selector[3], mods[3] / 10, mods[3] % 10);
 
 	gi.WriteByte(svc_layout);
 	gi.WriteString(str);
@@ -992,7 +1017,7 @@ void Cmd_Use_Wf_Mod(edict_t *ent)
 	cl = ent->client;
 	if (!cl->showhelp) return;
 	//if (cl->pers.selected_item < 0) SelectNextItem(ent, IT_WF_MOD);
-	it = FindItem("Warframe Mod");
+	it = FindItem("Intensify");
 	if (!it)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Item is not valid\n");
@@ -1065,8 +1090,16 @@ void ClientCommand (edict_t *ent)
 		Cmd_Noclip_f (ent);
 	else if (Q_stricmp (cmd, "inven") == 0)
 		Cmd_Inven_f (ent);
-	else if (Q_stricmp (cmd, "invnext") == 0)
-		SelectNextItem (ent, -1);
+	else if (Q_stricmp(cmd, "invnext") == 0)
+	{
+		if (ent && ent->client && ent->client->showhelp)
+		{
+			SelectNextItem(ent, IT_WF_MOD);
+			Cmd_Toggle_Mods_Menu(ent, false);
+		}
+		else
+			SelectNextItem(ent, -1);
+	}
 	else if (Q_stricmp (cmd, "invprev") == 0)
 		SelectPrevItem (ent, -1);
 	else if (Q_stricmp (cmd, "invnextw") == 0)
@@ -1099,7 +1132,7 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp(cmd, "ability") == 0)
 		Cmd_WarframeAb_f(ent);
 	else if (Q_stricmp(cmd, "togglemods") == 0)
-		Cmd_Toggle_Mods_Menu(ent);
+		Cmd_Toggle_Mods_Menu(ent, true);
 	else if (Q_stricmp(cmd, "usemod") == 0)
 		Cmd_Use_Wf_Mod(ent);
 	//==============end=================

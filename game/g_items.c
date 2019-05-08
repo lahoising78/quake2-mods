@@ -1135,7 +1135,10 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 qboolean Pickup_Warframe_Mod(edict_t *ent, edict_t *other)
 {
 
-	if (!ent || !other) return false;
+	if (!(ent && ent->item)) return false;
+	if (!(other && other->client)) return false;
+
+	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;
 
 	gi.cprintf(other, PRINT_LOW, "picking up mod");
 	return true;
@@ -2132,7 +2135,7 @@ tank commander's head
 	//==========mod============
 	//item for warframe MODS :3
 	{
-		"warframe_mod",
+		"intensify_mod",
 		Pickup_Warframe_Mod,
 		Use_Wf_Mod,
 		Drop_Item,
@@ -2141,7 +2144,70 @@ tank commander's head
 		"models/items/armor/body/tris.md2", EF_ROTATE,
 		NULL,
 		/* icon */		"i_health",
-		/* pickup */	"Warframe Mod",
+		/* pickup */	"Intensify",
+		/* width */		3,
+		0,
+		NULL,
+		IT_WF_MOD,
+		0,
+		NULL,
+		0,
+		/* precache */ ""
+	},
+
+	{
+		"stretch_mod",
+		Pickup_Warframe_Mod,
+		Use_Wf_Mod,
+		Drop_Item,
+		NULL,
+		"misc/ar1_pkup.wav",
+		"models/items/armor/body/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"i_health",
+		/* pickup */	"Stretch",
+		/* width */		3,
+		0,
+		NULL,
+		IT_WF_MOD,
+		0,
+		NULL,
+		0,
+		/* precache */ ""
+	},
+
+	{
+		"flow_mod",
+		Pickup_Warframe_Mod,
+		Use_Wf_Mod,
+		Drop_Item,
+		NULL,
+		"misc/ar1_pkup.wav",
+		"models/items/armor/body/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"i_health",
+		/* pickup */	"Flow",
+		/* width */		3,
+		0,
+		NULL,
+		IT_WF_MOD,
+		0,
+		NULL,
+		0,
+		/* precache */ ""
+	},
+
+	{
+		"continuity_mod",
+		Pickup_Warframe_Mod,
+		Use_Wf_Mod,
+		Drop_Item,
+		NULL,
+		"misc/ar1_pkup.wav",
+		"models/items/armor/body/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"i_health",
+		/* pickup */	"Continuity",
 		/* width */		3,
 		0,
 		NULL,

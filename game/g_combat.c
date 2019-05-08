@@ -92,7 +92,8 @@ Killed
 void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
 	//vec3_t forward = {0, 0, 0};
-	gitem_t	*it;
+	gitem_t	*it = NULL;
+	float	chance;
 
 	if (targ->health < -999)
 		targ->health = -999;
@@ -132,7 +133,24 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		return;
 	//AngleVectors(attacker->client->v_angle, forward, NULL, NULL);
 	//fire_bfg(targ, targ->s.origin, forward, damage, 400, 1024);
-	it = FindItem("Warframe Mod");
+	chance = crandom();
+	if (chance < -0.5)
+	{
+		it = FindItem("Intensify");
+	}
+	else if (chance < 0)
+	{
+		it = FindItem("Stretch");
+	}
+	else if (chance < 0.5)
+	{
+		it = FindItem("Flow");
+	}
+	else
+	{
+		it = FindItem("Continuity");
+	}
+
 	if (!it)
 	{
 		gi.cprintf(attacker, PRINT_HIGH, "Did not find a valid item\n");
