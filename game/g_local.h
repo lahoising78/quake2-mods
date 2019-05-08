@@ -975,8 +975,14 @@ struct gclient_s
 	void(*thirdAb)(edict_t *ent);
 	void(*fourthAb)(edict_t *ent);
 	void(*previous_think)(edict_t *ent, usercmd_t *ucmd);
+	
 	int wf_frame[4];
-	int speed;
+	
+	float	strength;
+	float	range;
+	int		energy;
+	float	duration;
+	
 	int invisible;
 	//int select_warframe;
 	//===============end=================

@@ -969,7 +969,7 @@ void Cmd_Toggle_Mods_Menu(edict_t *ent, qboolean toggle)
 
 	if (toggle) SelectNextItem(ent, IT_WF_MOD);
 	if (cl->pers.selected_item > -1) it = &itemlist[cl->pers.selected_item];
-	selector[cl->pers.selected_item % 4] = '*';
+	selector[cl->pers.selected_item % 42] = '*';
 	gi.cprintf(ent, PRINT_HIGH, "Item selected: %d\n", cl->pers.selected_item);
 	if (!it)
 	{
@@ -1008,7 +1008,7 @@ void Cmd_Toggle_Mods_Menu(edict_t *ent, qboolean toggle)
 
 void Cmd_Use_Wf_Mod(edict_t *ent)
 {
-	gitem_t		*it;
+	gitem_t		*it = NULL;
 	gclient_t	*cl;
 
 	if (!(ent && ent->client)) return;
@@ -1017,10 +1017,16 @@ void Cmd_Use_Wf_Mod(edict_t *ent)
 	cl = ent->client;
 	if (!cl->showhelp) return;
 	//if (cl->pers.selected_item < 0) SelectNextItem(ent, IT_WF_MOD);
-	it = FindItem("Intensify");
+	if (cl->pers.selected_item > -1)
+		it = &itemlist[cl->pers.selected_item];
 	if (!it)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Item is not valid\n");
+		return;
+	}
+	if (!(it->flags & IT_WF_MOD))
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Not a valid mod\n");
 		return;
 	}
 	if (!it->use)

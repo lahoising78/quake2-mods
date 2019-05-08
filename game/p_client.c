@@ -1301,7 +1301,7 @@ void RChargeThink(edict_t *self)
 	
 	gi.cprintf(self, PRINT_HIGH, "In RChargeThink\n");
 	client->wf_frame[0]++;
-	T_RadiusDamage(self, self, 30, self, 100, 0);
+	T_RadiusDamage(self, self, 30*client->strength, self, 100, 0);
 	/*AngleVectors(client->v_angle, forward, NULL, NULL);
 	ground = self->groundentity;
 	if (ground) {
@@ -1361,7 +1361,7 @@ void IronSkin(edict_t *ent)
 	it = FindItem("Body Armor");
 	if (ent->client->pers.inventory[ITEM_INDEX(it)]) return;
 	info = (gitem_armor_t *)it->info;
-	ent->client->pers.inventory[ITEM_INDEX(it)] = 300;	// info->max_count;
+	ent->client->pers.inventory[ITEM_INDEX(it)] = 300*ent->client->strength;	// info->max_count;
 
 	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[ITEM_INDEX(it)]);
 }
@@ -1472,7 +1472,10 @@ void SelectWarframe(edict_t *self)
 {
 	gclient_t *cl = self->client;
 	int i;
-	cl->speed = 1;
+	cl->strength = 1.0;
+	cl->range = 1.0;
+	cl->energy = 150;
+	cl->duration = 1.0;
 	cl->invisible = 0;
 
 	for (i = 0; i < 4; i++)
@@ -1802,7 +1805,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	level.current_entity = ent;
 	client = ent->client;
-	ent->speed *= client->speed;
+	//ent->speed *= client->speed;
 
 	if (level.intermissiontime)
 	{

@@ -1449,6 +1449,7 @@ void Shock_Fire(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "Calling Shock Fire\n");
 
 	if (!ent) return;
+	damage *= ent->client->strength;
 
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
 
@@ -1521,8 +1522,11 @@ void Oberon_Fire(edict_t *self)
 	vec3_t	offset;
 	vec3_t	angles;
 	edict_t	*ent, *other;
-	int count;
+	int count, dmg;
+
+	if (!(ent && ent->client)) return;
 	gi.cprintf(self, PRINT_HIGH, "Calling Oberon Fire\n");
+	dmg = 10*ent->client->strength;
 
 	AngleVectors(self->client->v_angle, forward, NULL, NULL);
 	VectorAdd(self->client->v_angle, self->client->kick_angles, angles);
@@ -1540,7 +1544,7 @@ void Oberon_Fire(edict_t *self)
 	other = tr.ent;
 	if (!(other->svflags & SVF_MONSTER) && (!other->client) && (strcmp(other->classname, "misc_explobox") != 0))
 		return;
-	T_Damage(other, self, self, forward, tr.endpos, vec3_origin, 1, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
+	T_Damage(other, self, self, forward, tr.endpos, vec3_origin, dmg, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
 	other->radiation = true;
 	FindTarget(other);
 
@@ -1563,7 +1567,7 @@ void Oberon_Fire(edict_t *self)
 		tr = gi.trace(other->s.origin, NULL, NULL, ent, other, CONTENTS_MONSTER);
 		count++;
 		VectorSubtract(ent->s.origin, other->s.origin, forward);
-		T_Damage(ent, self, self, forward, tr.endpos, vec3_origin, 1, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
+		T_Damage(ent, self, self, forward, tr.endpos, vec3_origin, dmg, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
 		ent->radiation = true;
 		FindTarget(ent);
 

@@ -156,7 +156,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		gi.cprintf(attacker, PRINT_HIGH, "Did not find a valid item\n");
 		return;
 	}
-	gi.cprintf(attacker, PRINT_HIGH, "found a %s\n", it->pickup_name);
+	//gi.cprintf(attacker, PRINT_HIGH, "found a %s\n", it->pickup_name);
 	if (!it->drop)
 	{
 		gi.cprintf(attacker, PRINT_HIGH, "cannot drop this item\n");
@@ -620,8 +620,9 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 void electric_damage(edict_t *self) 
 {
 	if (!self) return;
+	if (!self->client) return;
 
-	self->health -= 20;
+	self->health -= 20*self->client->strength;
 
 	if (self->health <= 0)
 	{

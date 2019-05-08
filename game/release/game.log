@@ -1,24 +1,49 @@
-﻿Build started 5/8/2019 3:06:01 PM.
+﻿Build started 5/8/2019 4:05:28 PM.
      1>Project "C:\Users\Luis\git\quake2-mods\game\game.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(357,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt g_cmds.c
-         g_cmds.c
-     1>g_cmds.c(34): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(57): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(58): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(722): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(725): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(808): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(809): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(810): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(821): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(828): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>g_cmds.c(891): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
-     1>g_cmds.c(893): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
-     1>g_cmds.c(897): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt g_combat.c p_client.c p_weapon.c
+         g_combat.c
+     1>g_combat.c(411): warning C4100: 'attacker' : unreferenced formal parameter
+     1>g_combat.c(411): warning C4100: 'targ' : unreferenced formal parameter
+         p_client.c
+     1>p_client.c(46): warning C4127: conditional expression is constant
+     1>p_client.c(70): warning C4100: 'self' : unreferenced formal parameter
+     1>p_client.c(179): warning C4100: 'damage' : unreferenced formal parameter
+     1>p_client.c(179): warning C4100: 'kick' : unreferenced formal parameter
+     1>p_client.c(179): warning C4100: 'other' : unreferenced formal parameter
+     1>p_client.c(179): warning C4100: 'self' : unreferenced formal parameter
+     1>p_client.c(211): warning C4100: 'inflictor' : unreferenced formal parameter
+     1>p_client.c(501): warning C4100: 'point' : unreferenced formal parameter
+     1>p_client.c(846): warning C4127: conditional expression is constant
+     1>p_client.c(931): warning C4100: 'point' : unreferenced formal parameter
+     1>p_client.c(931): warning C4100: 'attacker' : unreferenced formal parameter
+     1>p_client.c(931): warning C4100: 'inflictor' : unreferenced formal parameter
+     1>p_client.c(1299): warning C4101: 'ent' : unreferenced local variable
+     1>p_client.c(1298): warning C4101: 'e_btm' : unreferenced local variable
+     1>p_client.c(1297): warning C4189: 'ffd' : local variable is initialized but not referenced
+     1>p_client.c(1295): warning C4101: 'pm' : unreferenced local variable
+     1>p_client.c(1298): warning C4101: 'p_top' : unreferenced local variable
+     1>p_client.c(1296): warning C4101: 'forward' : unreferenced local variable
+     1>p_client.c(1298): warning C4101: 'p_btm' : unreferenced local variable
+     1>p_client.c(1298): warning C4101: 'e_top' : unreferenced local variable
+     1>p_client.c(1299): warning C4101: 'ground' : unreferenced local variable
+     1>p_client.c(1371): warning C4101: 'index' : unreferenced local variable
+     1>p_client.c(1448): warning C4013: 'Shock_Fire' undefined; assuming extern returning int
+     1>p_client.c(1460): warning C4013: 'Oberon_Fire' undefined; assuming extern returning int
+     1>p_client.c(1599): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>p_client.c(1604): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(195) : see declaration of 'strncpy'
+     1>p_client.c(1644): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(195) : see declaration of 'strncpy'
+         p_weapon.c
+     1>p_weapon.c(1549): warning C4013: 'FindTarget' undefined; assuming extern returning int
+     1>p_weapon.c(1567): warning C4133: 'function' : incompatible types - from 'edict_t *' to 'vec_t *'
+         Generating Code...
+     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1469): warning C4700: uninitialized local variable 'tar' used
+     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1527): warning C4700: uninitialized local variable 'ent' used
+     1>c:\users\luis\git\quake2-mods\game\g_combat.c(290): warning C4701: potentially uninitialized local variable 'index' used
+     1>c:\users\luis\git\quake2-mods\game\g_combat.c(250): warning C4701: potentially uninitialized local variable 'power' used
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.dll" /INCREMENTAL:NO /NOLOGO winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\game.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /BASE:"0x20000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:".\..\release\gamex86.lib" /MACHINE:X86 /SAFESEH /DLL .\release\g_ai.obj
          .\release\g_chase.obj
@@ -74,4 +99,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.91
+Time Elapsed 00:00:01.32
