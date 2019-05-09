@@ -1335,13 +1335,20 @@ void RhinoCharge(edict_t *self)
 {
 	vec3_t forward, right;
 	gclient_t *client = self->client;
+	int sc;
 	gi.cprintf(self, PRINT_HIGH, "Calling Rhino Charge\n");
 	//self->client->previous_think = globals.ClientThink;
 	//globals.ClientThink = RChargeThink;
 	//self->client->charge_framenum = 0;
-	client->wf_frame[0] = 0;
+	client->wf_frame[0] = 1;
 	AngleVectors(client->v_angle, forward, right, NULL);
-	VectorScale(forward, 1000, forward);
+	sc = 500 * client->range;
+	if (sc > 2000) sc = 2000;
+	VectorScale(forward, sc, forward);
+	if (self->groundentity)
+	{
+		forward[2] = self->groundentity->s.angles[2] + 1;
+	}
 	VectorAdd(self->velocity, forward, self->velocity);
 }
 
@@ -1352,16 +1359,10 @@ void IronSkin(edict_t *ent)
 
 	gi.cprintf(ent, PRINT_HIGH, "Calling Iron Skin\n");
 
-	/*it = FindItem("Jacket Armor");
-	ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
-
-	it = FindItem("Combat Armor");
-	ent->client->pers.inventory[ITEM_INDEX(it)] = 0;*/
-
 	it = FindItem("Body Armor");
 	if (ent->client->pers.inventory[ITEM_INDEX(it)]) return;
 	info = (gitem_armor_t *)it->info;
-	ent->client->pers.inventory[ITEM_INDEX(it)] = 300*ent->client->strength;	// info->max_count;
+	ent->client->pers.inventory[ITEM_INDEX(it)] = 100*ent->client->strength;	// info->max_count;
 
 	gi.cprintf(ent, PRINT_HIGH, "armor: %d\n\n", ent->client->pers.inventory[ITEM_INDEX(it)]);
 }
@@ -1394,10 +1395,12 @@ void RhinoStomp(edict_t *self)
 	edict_t *mob = NULL;
 	vec3_t knockback = {0,0,30};
 	
+	if (!(self && self->client)) return;
+
 	if (self->client->firstAb == RhinoCharge) gi.cprintf(self, PRINT_HIGH, "Calling Rhino Stomp\n");
 	else gi.cprintf(self, PRINT_HIGH, "Calling Discharge\n");
 
-	while ((mob = findradius(mob, self->s.origin, 256)) != NULL) {
+	while ((mob = findradius(mob, self->s.origin, 256*self->client->range)) != NULL) {
 		if (mob == self) continue;
 		if (mob == self->owner) continue;
 		if (!mob->takedamage) continue;
@@ -1409,7 +1412,7 @@ void RhinoStomp(edict_t *self)
 			count++;
 			if (mob->nextthink) {
 				if (self->client->firstAb == RhinoCharge) VectorAdd(mob->s.origin, knockback, mob->s.origin);
-				mob->nextthink = level.time + 5;
+				mob->nextthink = level.time + (5 * self->client->duration );
 			}
 		}
 	}
@@ -1971,6 +1974,28 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+
+	//============mod============
+	{
+		//created in a block for simplicity's sake
+		edict_t		*tar;
+		vec3_t		aimdir;
+		int			dmg;
+
+		if (client->wf_frame[0])
+		{
+			if (client->wf_frame[0] > 5)
+			{
+				return;
+			}
+			client->wf_frame[0]++;
+
+			dmg = 120 * client->strength;
+			T_RadiusDamage(ent, ent, dmg, ent, 256 * client->range, MOD_BFG_LASER);
+			
+		}
+	}
+	//===========end============
 }
 
 

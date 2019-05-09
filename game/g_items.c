@@ -350,7 +350,7 @@ void Use_Quad (edict_t *ent, gitem_t *item)
 	}
 	else
 	{
-		timeout = 300;
+		timeout = 300 * roundf(ent->client->duration);
 	}
 
 	if (ent->client->quad_framenum > level.framenum)
