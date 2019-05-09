@@ -1147,6 +1147,14 @@ qboolean Pickup_Warframe_Mod(edict_t *ent, edict_t *other)
 void Use_Wf_Mod(edict_t *ent, gitem_t *item)
 {
 	gclient_t *cl;
+	/*int mod;
+	enum {
+		INTENSIFY,
+		STRETCH,
+		FLOW,
+		CONTINUITY
+	};*/
+
 	if (!(ent && ent->client)) return;
 	if (!(item && (item->flags & IT_WF_MOD))) return;
 	
@@ -1157,6 +1165,21 @@ void Use_Wf_Mod(edict_t *ent, gitem_t *item)
 	{
 		cl->strength += 0.05;
 		gi.cprintf(ent, PRINT_HIGH, "new strength: %.2f\n", cl->strength);
+	}
+	else if (Q_stricmp(item->pickup_name, "Stretch") == 0)
+	{
+		cl->range += 0.05;
+		gi.cprintf(ent, PRINT_HIGH, "new range: %.2f\n", cl->range);
+	}
+	else if (Q_stricmp(item->pickup_name, "Flow") == 0)
+	{
+		cl->energy += 1;
+		gi.cprintf(ent, PRINT_HIGH, "new energy: %d\n", cl->energy);
+	}
+	else if (Q_stricmp(item->pickup_name, "Continuity") == 0)
+	{
+		cl->duration += 0.05;
+		gi.cprintf(ent, PRINT_HIGH, "new duration: %.2f\n", cl->duration);
 	}
 
 }

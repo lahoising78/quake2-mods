@@ -1465,7 +1465,7 @@ void Shock_Fire(edict_t *ent)
 		already_hit[hit] = tr.ent;
 		hit++;
 		other = tr.ent;
-		electric_damage(other);
+		electric_damage(other, ent, damage, 5 * ent->client->duration);
 		while ( (tar = findradius(tar, other->s.origin, 400)) != NULL )  
 		{
 			//check stuff
@@ -1483,7 +1483,7 @@ void Shock_Fire(edict_t *ent)
 			VectorSubtract(tar->s.origin, other->s.origin, aimdir);
 			VectorNormalize(aimdir);
 			fire_bullet(other, other->s.origin, aimdir, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_BFG_LASER);
-			electric_damage(tar);
+			electric_damage(tar, ent, damage, 5 * ent->client->duration);
 
 			gi.WriteByte(svc_temp_entity);
 			gi.WriteByte(TE_BFG_LASER);

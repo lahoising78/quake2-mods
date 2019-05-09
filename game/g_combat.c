@@ -617,18 +617,20 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 }
 
 //==============mod===================
-void electric_damage(edict_t *self) 
+void electric_damage(edict_t *self, edict_t *attacker, float dmg, float duration) 
 {
 	if (!self) return;
-	if (!self->client) return;
+	if (!(attacker && attacker->client)) return;
+	gi.cprintf(attacker, PRINT_HIGH, "electric damage call\ndamage: %.2f\nduration: %.2f\n", dmg, duration);
 
-	self->health -= 20*self->client->strength;
+	self->health -= dmg;
 
 	if (self->health <= 0)
 	{
-		Killed(self, self, self, 8, self->s.origin);
+		Killed(self, self, self, dmg, self->s.origin);
+		if (self->nextthink && self->think) self->nextthink = level.time;
 	}
 
-	if (self->nextthink && self->think) self->nextthink = level.time + 5;
+	if (self->nextthink && self->think) self->nextthink = level.time + duration;
 }
 //==============end===================
