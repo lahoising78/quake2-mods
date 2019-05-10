@@ -1580,6 +1580,58 @@ void Oberon_Fire(edict_t *self)
 
 	
 }
+
+//************************
+//    antimatter drop
+//************************
+
+
+void Antimatter_Drop_Fire(edict_t *self, int damage)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+
+	if (!(self && self->client)) return;
+	gi.cprintf(self, PRINT_HIGH, "Firing antimatter\n");
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors(self->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, self->viewheight - 8);
+	//VectorAdd(offset, g_offset, offset);
+	P_ProjectSource(self->client, self->s.origin, offset, forward, right, start);
+
+	VectorScale(forward, -2, self->client->kick_origin);
+	self->client->kick_angles[0] = -1;
+
+	fire_antimatter(self, start, forward, damage, 50, 400);
+}
+
+//********************************
+//			NULL STAR
+//********************************
+void Nullstar_Fire(edict_t *self, int damage)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+
+	if (!(self && self->client)) return;
+	gi.cprintf(self, PRINT_HIGH, "Firing Null Star\n");
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors(self->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, self->viewheight - 8);
+	//VectorAdd(offset, g_offset, offset);
+	P_ProjectSource(self->client, self->s.origin, offset, forward, right, start);
+
+	VectorScale(forward, -2, self->client->kick_origin);
+	self->client->kick_angles[0] = -1;
+
+	fire_nullstar(self, start, forward, damage, 50, 400);
+}
 //=====================end==================
 
 

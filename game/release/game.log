@@ -1,40 +1,15 @@
-﻿Build started 5/9/2019 2:50:11 AM.
+﻿Build started 5/10/2019 7:09:31 PM.
      1>Project "C:\Users\Luis\git\quake2-mods\game\game.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(357,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt p_client.c
-         p_client.c
-     1>p_client.c(46): warning C4127: conditional expression is constant
-     1>p_client.c(70): warning C4100: 'self' : unreferenced formal parameter
-     1>p_client.c(179): warning C4100: 'damage' : unreferenced formal parameter
-     1>p_client.c(179): warning C4100: 'kick' : unreferenced formal parameter
-     1>p_client.c(179): warning C4100: 'other' : unreferenced formal parameter
-     1>p_client.c(179): warning C4100: 'self' : unreferenced formal parameter
-     1>p_client.c(211): warning C4100: 'inflictor' : unreferenced formal parameter
-     1>p_client.c(501): warning C4100: 'point' : unreferenced formal parameter
-     1>p_client.c(846): warning C4127: conditional expression is constant
-     1>p_client.c(931): warning C4100: 'point' : unreferenced formal parameter
-     1>p_client.c(931): warning C4100: 'attacker' : unreferenced formal parameter
-     1>p_client.c(931): warning C4100: 'inflictor' : unreferenced formal parameter
-     1>p_client.c(1299): warning C4101: 'ent' : unreferenced local variable
-     1>p_client.c(1298): warning C4101: 'e_btm' : unreferenced local variable
-     1>p_client.c(1297): warning C4189: 'ffd' : local variable is initialized but not referenced
-     1>p_client.c(1295): warning C4101: 'pm' : unreferenced local variable
-     1>p_client.c(1298): warning C4101: 'p_top' : unreferenced local variable
-     1>p_client.c(1296): warning C4101: 'forward' : unreferenced local variable
-     1>p_client.c(1298): warning C4101: 'p_btm' : unreferenced local variable
-     1>p_client.c(1298): warning C4101: 'e_top' : unreferenced local variable
-     1>p_client.c(1299): warning C4101: 'ground' : unreferenced local variable
-     1>p_client.c(1372): warning C4101: 'index' : unreferenced local variable
-     1>p_client.c(1451): warning C4013: 'Shock_Fire' undefined; assuming extern returning int
-     1>p_client.c(1463): warning C4013: 'Oberon_Fire' undefined; assuming extern returning int
-     1>p_client.c(1602): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-     1>p_client.c(1607): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(195) : see declaration of 'strncpy'
-     1>p_client.c(1647): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(195) : see declaration of 'strncpy'
-     1>p_client.c(1981): warning C4101: 'tar' : unreferenced local variable
-     1>p_client.c(1982): warning C4101: 'aimdir' : unreferenced local variable
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt p_weapon.c
+         p_weapon.c
+     1>p_weapon.c(1549): warning C4013: 'FindTarget' undefined; assuming extern returning int
+     1>p_weapon.c(1567): warning C4133: 'function' : incompatible types - from 'edict_t *' to 'vec_t *'
+     1>p_weapon.c(1608): warning C4013: 'fire_antimatter' undefined; assuming extern returning int
+     1>p_weapon.c(1633): warning C4013: 'fire_nullstar' undefined; assuming extern returning int
+     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1469): warning C4700: uninitialized local variable 'tar' used
+     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1527): warning C4700: uninitialized local variable 'ent' used
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.dll" /INCREMENTAL:NO /NOLOGO winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\game.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /BASE:"0x20000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:".\..\release\gamex86.lib" /MACHINE:X86 /SAFESEH /DLL .\release\g_ai.obj
          .\release\g_chase.obj
@@ -90,4 +65,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.12
+Time Elapsed 00:00:00.89

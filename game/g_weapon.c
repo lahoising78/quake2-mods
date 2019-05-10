@@ -914,3 +914,122 @@ void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, f
 
 	gi.linkentity (bfg);
 }
+
+//===============mod===============
+//***************
+//	antimatter
+//***************
+void antimatter_think(edict_t *self)
+{
+	edict_t		*ent;
+	vec3_t		forward, s_forward;
+	vec3_t		end;
+	vec3_t		dir;
+
+	if (!self) return;
+	if (!self->owner) return;
+	if (!self->owner->client) return;
+
+	ent = self->owner;
+	
+	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+	VectorNormalize2(self->velocity, dir);
+	VectorAdd(-dir, forward, dir);
+	VectorNormalize(dir);
+	VectorScale(dir, 10, dir);
+	VectorAdd(dir, self->s.origin, end);
+	VectorAdd(self->s.origin, dir, self->s.origin);
+	
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BFG_LASER);
+	gi.WritePosition(self->s.origin);
+	gi.WritePosition(end);
+	gi.multicast(self->s.origin, MULTICAST_PHS);
+	
+	self->nextthink = level.time + FRAMETIME;
+}
+
+void fire_antimatter(edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
+{
+	edict_t	*bfg;
+
+	bfg = G_Spawn();
+	VectorCopy(start, bfg->s.origin);
+	VectorCopy(dir, bfg->movedir);
+	vectoangles(dir, bfg->s.angles);
+	VectorScale(dir, speed, bfg->velocity);
+	bfg->movetype = MOVETYPE_FLYMISSILE;
+	bfg->clipmask = MASK_SHOT;
+	bfg->solid = SOLID_BBOX;
+	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
+	VectorClear(bfg->mins);
+	VectorClear(bfg->maxs);
+	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
+	bfg->owner = self;
+	bfg->touch = bfg_touch;
+	bfg->nextthink = level.time + 8000 / speed;
+	bfg->think = G_FreeEdict;
+	bfg->radius_dmg = damage;
+	bfg->dmg_radius = damage_radius;
+	bfg->classname = "bfg blast";
+	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
+
+	bfg->think = antimatter_think;
+	bfg->nextthink = level.time + FRAMETIME;
+	bfg->teammaster = bfg;
+	bfg->teamchain = NULL;
+
+	if (self->client)
+		check_dodge(self, bfg->s.origin, dir, speed);
+
+	gi.linkentity(bfg);
+}
+
+void nullstar_think(edict_t *self)
+{
+	edict_t *owner;
+	gclient_t *cl;
+
+	if (!(self && self->owner && self->owner->client)) return;
+	owner = self->owner;
+	cl = owner->client;
+
+	gi.cprintf(owner, PRINT_HIGH, "I am a null star\n");
+}
+
+void fire_nullstar(edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
+{
+	edict_t	*bfg;
+
+	bfg = G_Spawn();
+	VectorCopy(start, bfg->s.origin);
+	VectorCopy(dir, bfg->movedir);
+	vectoangles(dir, bfg->s.angles);
+	VectorScale(dir, speed, bfg->velocity);
+	bfg->movetype = MOVETYPE_FLYMISSILE;
+	bfg->clipmask = MASK_SHOT;
+	bfg->solid = SOLID_BBOX;
+	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
+	VectorClear(bfg->mins);
+	VectorClear(bfg->maxs);
+	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
+	bfg->owner = self;
+	bfg->touch = bfg_touch;
+	bfg->nextthink = level.time + 8000 / speed;
+	bfg->think = G_FreeEdict;
+	bfg->radius_dmg = damage;
+	bfg->dmg_radius = damage_radius;
+	bfg->classname = "bfg blast";
+	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
+
+	bfg->think = nullstar_think;
+	bfg->nextthink = level.time + FRAMETIME;
+	bfg->teammaster = bfg;
+	bfg->teamchain = NULL;
+
+	if (self->client)
+		check_dodge(self, bfg->s.origin, dir, speed);
+
+	gi.linkentity(bfg);
+}
+//===============end===============
