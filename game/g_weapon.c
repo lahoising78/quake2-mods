@@ -922,7 +922,7 @@ void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, f
 void antimatter_think(edict_t *self)
 {
 	edict_t		*ent;
-	vec3_t		forward, s_forward;
+	vec3_t		forward;
 	vec3_t		end;
 	vec3_t		dir;
 
@@ -932,6 +932,7 @@ void antimatter_think(edict_t *self)
 
 	ent = self->owner;
 	
+	VectorSubtract(self->s.origin, ent->s.origin, end);
 	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
 	VectorNormalize2(self->velocity, dir);
 	VectorAdd(-dir, forward, dir);
@@ -985,51 +986,145 @@ void fire_antimatter(edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	gi.linkentity(bfg);
 }
 
-void nullstar_think(edict_t *self)
+void nullstar_to_target(edict_t *self)
+{
+	edict_t *enemy;
+	vec3_t dir;
+	vec3_t end;
+	
+	if (!self) return;
+	if (!self->enemy) return;
+	enemy = self->enemy;
+	//self->dmg = 200;
+
+	VectorSubtract(enemy->s.origin, self->s.origin, dir);
+	if (VectorLength(dir) < 20) {
+		VectorNormalize(dir);
+		gi.cprintf(self->owner, PRINT_HIGH, "my damage: %d\n", self->dmg);
+		T_Damage(enemy, self, self->owner, dir, enemy->s.origin, vec3_origin, self->dmg, 20, DAMAGE_BULLET, MOD_BLASTER);
+		return;
+	}
+	VectorNormalize(dir);
+	VectorScale(dir, 200, dir);
+	VectorCopy(dir, self->velocity);
+
+	/*gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BFG_LASER);
+	gi.WritePosition(self->s.origin);
+	gi.WritePosition(enemy->s.origin);
+	gi.multicast(self->owner->s.origin, MULTICAST_PHS);*/
+}
+
+void nullstar_around(edict_t *self)
 {
 	edict_t *owner;
 	gclient_t *cl;
+	vec3_t dir;
+	vec3_t up;
+	vec3_t in;
 
-	if (!(self && self->owner && self->owner->client)) return;
 	owner = self->owner;
 	cl = owner->client;
 
-	gi.cprintf(owner, PRINT_HIGH, "I am a null star\n");
+	AngleVectors(cl->v_angle, NULL, NULL, up);
+	VectorSubtract(owner->s.origin, self->s.origin, in);
+	VectorNormalize(dir);
+	CrossProduct(in, up, dir);
+	VectorNormalize(dir);
+	VectorScale(dir, 20, dir);
+	VectorAdd(dir, self->s.origin, self->s.origin);
+	VectorSubtract(self->s.origin, owner->s.origin, in);
+	if (fabsf(VectorLength(in)) > 50)
+	{
+		VectorNormalize(in);
+		VectorScale(in, 50, in);
+		VectorAdd(in, owner->s.origin, self->s.origin);
+	}
 }
 
-void fire_nullstar(edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
+void nullstar_think(edict_t *self)
 {
-	edict_t	*bfg;
+	edict_t *owner, *ent;
+	gclient_t *cl;
+	
+	if (!(self && self->owner && self->owner->client)) return;
+	owner = self->owner;
+	cl = owner->client;
+	
+	if (self->enemy)
+	{
+		//gi.cprintf(owner, PRINT_HIGH, "You have an enemy\n");
+		nullstar_to_target(self);
+	}
+	else {
+		nullstar_around(self);
+		while ((ent = findradius(ent, owner->s.origin, 300)) != NULL)
+		{
+			if (ent == self)
+				continue;
+			if (ent == self->owner)
+				continue;
+			if (!ent->takedamage)
+				continue;
+			if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+				continue;
 
-	bfg = G_Spawn();
-	VectorCopy(start, bfg->s.origin);
-	VectorCopy(dir, bfg->movedir);
-	vectoangles(dir, bfg->s.angles);
-	VectorScale(dir, speed, bfg->velocity);
-	bfg->movetype = MOVETYPE_FLYMISSILE;
-	bfg->clipmask = MASK_SHOT;
-	bfg->solid = SOLID_BBOX;
-	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
-	VectorClear(bfg->mins);
-	VectorClear(bfg->maxs);
-	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
-	bfg->owner = self;
-	bfg->touch = bfg_touch;
-	bfg->nextthink = level.time + 8000 / speed;
-	bfg->think = G_FreeEdict;
-	bfg->radius_dmg = damage;
-	bfg->dmg_radius = damage_radius;
-	bfg->classname = "bfg blast";
-	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
+			if (ent->svflags & SVF_MONSTER)
+			{
+				self->enemy = ent;
+				break;
+			}
 
-	bfg->think = nullstar_think;
-	bfg->nextthink = level.time + FRAMETIME;
-	bfg->teammaster = bfg;
-	bfg->teamchain = NULL;
+			/*gi.WriteByte(svc_temp_entity);
+			gi.WriteByte(TE_BFG_LASER);
+			gi.WritePosition(self->s.origin);
+			gi.WritePosition(ent->s.origin);
+			gi.multicast(self->s.origin, MULTICAST_PHS);*/
 
-	if (self->client)
-		check_dodge(self, bfg->s.origin, dir, speed);
+			break;
+		}
+	}
 
-	gi.linkentity(bfg);
+	self->nextthink = level.time + FRAMETIME;
+}
+
+void fire_nullstar(edict_t *self, vec3_t start, vec3_t dir, int damage)
+{
+	edict_t	*bolt;
+	trace_t	tr;
+
+	gi.cprintf(self, PRINT_HIGH, "damage: %d\n", damage);
+	VectorNormalize(dir);
+
+	bolt = G_Spawn();
+	bolt->svflags = SVF_DEADMONSTER;
+	VectorCopy(start, bolt->s.origin);
+	VectorCopy(start, bolt->s.old_origin);
+	vectoangles(dir, bolt->s.angles);
+	bolt->movetype = MOVETYPE_FLYMISSILE;
+	bolt->clipmask = MASK_SHOT;
+	bolt->solid = SOLID_BBOX;
+	bolt->s.effects |= EF_BLASTER;
+	VectorClear(bolt->mins);
+	VectorClear(bolt->maxs);
+	bolt->s.modelindex = gi.modelindex("models/objects/laser/tris.md2");
+	bolt->s.sound = gi.soundindex("misc/lasfly.wav");
+	bolt->owner = self;
+	bolt->touch = blaster_touch;
+	bolt->nextthink = level.time + FRAMETIME;
+	bolt->think = nullstar_think;
+	bolt->dmg = damage;
+	bolt->classname = "bolt";
+	gi.linkentity(bolt);
+
+	//if (self->client)
+	//	check_dodge(self, bolt->s.origin, dir, speed);
+
+	tr = gi.trace(self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+	if (tr.fraction < 1.0)
+	{
+		VectorMA(bolt->s.origin, -10, dir, bolt->s.origin);
+		bolt->touch(bolt, tr.ent, NULL, NULL);
+	}
 }
 //===============end===============

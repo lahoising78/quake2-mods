@@ -1611,14 +1611,17 @@ void Antimatter_Drop_Fire(edict_t *self, int damage)
 //********************************
 //			NULL STAR
 //********************************
-void Nullstar_Fire(edict_t *self, int damage)
+void Nullstar_Fire(edict_t *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
+	int damage;
+	int i;
 
 	if (!(self && self->client)) return;
-	gi.cprintf(self, PRINT_HIGH, "Firing Null Star\n");
+	damage = 100 * self->client->strength;
+	gi.cprintf(self, PRINT_HIGH, "Firing Null Star %d\n", damage);
 
 	if (is_quad)
 		damage *= 4;
@@ -1630,7 +1633,7 @@ void Nullstar_Fire(edict_t *self, int damage)
 	VectorScale(forward, -2, self->client->kick_origin);
 	self->client->kick_angles[0] = -1;
 
-	fire_nullstar(self, start, forward, damage, 50, 400);
+	fire_nullstar(self, start, forward, damage);
 }
 //=====================end==================
 

@@ -1425,9 +1425,11 @@ void RhinoStomp(edict_t *self)
 //****************************
 void NullStar(edict_t *self) 
 {
-	if (!(self && self->client)) return;
-	gi.cprintf(self, PRINT_HIGH, "Calling Null Star\n");
-	Nullstar_Fire(self, 100 * self->client->strength);
+	float dmg;
+	if (!self) return;
+	if (!self->client) return;
+	gi.cprintf(self, PRINT_HIGH, "Calling Null Star %.2f\n", self->client->strength);
+	Nullstar_Fire(self);
 }
 
 void AntimatterDrop(edict_t *self)
