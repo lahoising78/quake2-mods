@@ -1,19 +1,15 @@
-﻿Build started 5/13/2019 2:11:32 AM.
+﻿Build started 5/13/2019 3:03:16 AM.
      1>Project "C:\Users\Luis\git\quake2-mods\game\game.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(357,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt p_weapon.c
-         p_weapon.c
-     1>p_weapon.c(1549): warning C4013: 'FindTarget' undefined; assuming extern returning int
-     1>p_weapon.c(1567): warning C4133: 'function' : incompatible types - from 'edict_t *' to 'vec_t *'
-     1>p_weapon.c(1608): warning C4013: 'fire_antimatter' undefined; assuming extern returning int
-     1>p_weapon.c(1636): warning C4013: 'fire_nullstar' undefined; assuming extern returning int
-     1>p_weapon.c(1620): warning C4101: 'i' : unreferenced local variable
-     1>p_weapon.c(1653): warning C4013: 'fire_wormhole' undefined; assuming extern returning int
-     1>p_weapon.c(1653): warning C4047: '=' : 'edict_t *' differs in levels of indirection from 'int'
-     1>p_weapon.c(1654): warning C4047: '=' : 'edict_t *' differs in levels of indirection from 'int'
-     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1469): warning C4700: uninitialized local variable 'tar' used
-     1>c:\users\luis\git\quake2-mods\game\p_weapon.c(1527): warning C4700: uninitialized local variable 'ent' used
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt g_weapon.c
+         g_weapon.c
+     1>g_weapon.c(455): warning C4100: 'plane' : unreferenced formal parameter
+     1>g_weapon.c(843): warning C4127: conditional expression is constant
+     1>g_weapon.c(995): warning C4101: 'end' : unreferenced local variable
+     1>g_weapon.c(1133): warning C4100: 'surf' : unreferenced formal parameter
+     1>g_weapon.c(1133): warning C4100: 'plane' : unreferenced formal parameter
+     1>c:\users\luis\git\quake2-mods\game\g_weapon.c(1063): warning C4700: uninitialized local variable 'ent' used
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.dll" /NOLOGO winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\game.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quake 2\warframe\gamex86.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /BASE:"0x20000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:".\..\release\gamex86.lib" /MACHINE:X86 /SAFESEH /DLL .\release\g_ai.obj
          .\release\g_chase.obj
@@ -69,4 +65,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.83
+Time Elapsed 00:00:00.92

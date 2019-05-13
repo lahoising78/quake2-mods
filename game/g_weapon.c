@@ -1134,7 +1134,7 @@ void wormhole_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 {
 	vec3_t end;
 	if (!self) return;
-	//if (!self->enemy) return;
+	if (!self->enemy) return;
 	if (!other) return;
 	if (!other->client) return;
 
@@ -1146,8 +1146,9 @@ void wormhole_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 
 void wormhole_think(edict_t *self)
 {
-	int done = 10 * FRAMETIME; 
+	int done = 2000 * FRAMETIME; 
 	int *frame;
+	vec3_t	dir;
 	
 	if (!self->enemy) return;
 	gi.cprintf(self->owner, PRINT_HIGH, "you have another portal\n");
@@ -1159,19 +1160,27 @@ void wormhole_think(edict_t *self)
 	//self->think = G_FreeEdict;
 	self->nextthink = level.time + FRAMETIME;
 	frame = &self->owner->client->wf_frame[2];
-	*frame++;
-	gi.cprintf(self->owner, PRINT_HIGH, "frame: %d", *frame);
+	*frame+=1;
+	gi.cprintf(self->owner, PRINT_HIGH, "frame: %d\n", *frame);
 
 	if (*frame > done)
 	{
 		*frame = 0;
 		self->think = G_FreeEdict;
-		//self->nextthink = level.time + FRAMETIME;
+		self->enemy->think = G_FreeEdict;
+		self->nextthink = level.time + FRAMETIME;
+	}
+
+	VectorSubtract(self->owner->s.origin, self->s.origin, dir);
+	if (abs(VectorLength(dir)) < 10)
+	{
+		//VectorNormalize(dir);
+		VectorMA(self->enemy->s.origin, 30, self->movedir, self->owner->s.origin);
 	}
 
 }
 
-edict_t* fire_wormhole(edict_t *self, vec3_t start, vec3_t dir)
+edict_t* fire_wormhole(edict_t *self, vec3_t start, vec3_t dir, int speed, int damage, float damage_radius)
 {
 	edict_t	*bfg;
 
@@ -1180,20 +1189,21 @@ edict_t* fire_wormhole(edict_t *self, vec3_t start, vec3_t dir)
 	VectorCopy(dir, bfg->movedir);
 	vectoangles(dir, bfg->s.angles);
 	//VectorScale(dir, speed, bfg->velocity);
+	VectorClear(bfg->velocity);
 	bfg->movetype = MOVETYPE_NONE;
-	bfg->clipmask = MASK_SOLID;
+	//bfg->clipmask = MASK_SHOT;
 	bfg->solid = SOLID_BBOX;
-	bfg->s.effects |= EF_POWERSCREEN;
+	//bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
 	VectorClear(bfg->mins);
 	VectorClear(bfg->maxs);
-	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
+	bfg->s.modelindex = gi.modelindex("sprites/s_flash.sp2");
 	bfg->owner = self;
 	bfg->touch = wormhole_touch;
 	//bfg->nextthink = level.time + 8000 / speed;
 	//bfg->think = G_FreeEdict;
-	//bfg->radius_dmg = damage;
-	//bfg->dmg_radius = damage_radius;
-	bfg->classname = "wormhole";
+	bfg->radius_dmg = damage;
+	bfg->dmg_radius = damage_radius;
+	bfg->classname = "bfg blast";
 	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
 
 	bfg->think = wormhole_think;
@@ -1201,8 +1211,8 @@ edict_t* fire_wormhole(edict_t *self, vec3_t start, vec3_t dir)
 	bfg->teammaster = bfg;
 	bfg->teamchain = NULL;
 
-	//if (self->client)
-	//	check_dodge(self, bfg->s.origin, dir, speed);
+	if (self->client)
+		check_dodge(self, bfg->s.origin, dir, speed);
 
 	gi.linkentity(bfg);
 	return bfg;

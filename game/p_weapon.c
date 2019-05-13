@@ -1641,17 +1641,18 @@ void Nullstar_Fire(edict_t *self)
 //*********************
 void Wormhole_Fire(edict_t *self)
 {
-	vec3_t forward;
+	vec3_t forward, backward;
 	vec3_t	start, end;
 	edict_t *ent1, *ent2;
 	gi.cprintf(self, PRINT_HIGH, "this is woormhole\n");
 
 	AngleVectors(self->client->v_angle, forward, NULL, NULL);
+	VectorCopy(-forward, backward);
 	VectorMA(self->s.origin, 30, forward, start);
-	VectorMA(self->s.origin, 100, forward, end);
+	VectorMA(self->s.origin, 400, forward, end);
 
-	ent1 = fire_wormhole(self, start, forward);
-	ent2 = fire_wormhole(self, end, forward);
+	ent1 = fire_wormhole(self, start, forward, 50, 100, 256);
+	ent2 = fire_wormhole(self, end, backward, 50, 100, 256);
 	ent1->enemy = ent2;
 	ent2->enemy = ent1;
 
