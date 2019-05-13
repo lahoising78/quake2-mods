@@ -1442,6 +1442,7 @@ void AntimatterDrop(edict_t *self)
 void WormHole(edict_t *self)
 {
 	gi.cprintf(self, PRINT_HIGH, "Calling Worm Hole\n");
+	Wormhole_Fire(self);
 }
 
 void MolecularPrime(edict_t *self)

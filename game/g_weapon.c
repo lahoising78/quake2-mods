@@ -925,6 +925,7 @@ void antimatter_think(edict_t *self)
 	vec3_t		forward;
 	vec3_t		end;
 	vec3_t		dir;
+	int			scale;
 
 	if (!self) return;
 	if (!self->owner) return;
@@ -935,11 +936,12 @@ void antimatter_think(edict_t *self)
 	VectorSubtract(self->s.origin, ent->s.origin, end);
 	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
 	VectorNormalize2(self->velocity, dir);
-	VectorAdd(-dir, forward, dir);
+	scale = VectorLength(self->velocity);
+	VectorAdd(forward, dir, dir);
 	VectorNormalize(dir);
-	VectorScale(dir, 10, dir);
+	VectorScale(dir, scale, dir);
 	VectorAdd(dir, self->s.origin, end);
-	VectorAdd(self->s.origin, dir, self->s.origin);
+	VectorCopy(dir, self->velocity);
 	
 	gi.WriteByte(svc_temp_entity);
 	gi.WriteByte(TE_BFG_LASER);
@@ -1126,5 +1128,83 @@ void fire_nullstar(edict_t *self, vec3_t start, vec3_t dir, int damage)
 		VectorMA(bolt->s.origin, -10, dir, bolt->s.origin);
 		bolt->touch(bolt, tr.ent, NULL, NULL);
 	}
+}
+
+void wormhole_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	vec3_t end;
+	if (!self) return;
+	//if (!self->enemy) return;
+	if (!other) return;
+	if (!other->client) return;
+
+	gi.cprintf(other, PRINT_HIGH, "aaaah be gentle senpai\n");
+	
+	VectorMA(self->enemy->s.origin, 10, self->movedir, end);
+	VectorCopy(end, other->s.origin);
+}
+
+void wormhole_think(edict_t *self)
+{
+	int done = 10 * FRAMETIME; 
+	int *frame;
+	
+	if (!self->enemy) return;
+	gi.cprintf(self->owner, PRINT_HIGH, "you have another portal\n");
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BFG_LASER);
+	gi.WritePosition(self->s.origin);
+	gi.WritePosition(self->enemy->s.origin);
+	gi.multicast(self->s.origin, MULTICAST_PHS);
+	//self->think = G_FreeEdict;
+	self->nextthink = level.time + FRAMETIME;
+	frame = &self->owner->client->wf_frame[2];
+	*frame++;
+	gi.cprintf(self->owner, PRINT_HIGH, "frame: %d", *frame);
+
+	if (*frame > done)
+	{
+		*frame = 0;
+		self->think = G_FreeEdict;
+		//self->nextthink = level.time + FRAMETIME;
+	}
+
+}
+
+edict_t* fire_wormhole(edict_t *self, vec3_t start, vec3_t dir)
+{
+	edict_t	*bfg;
+
+	bfg = G_Spawn();
+	VectorCopy(start, bfg->s.origin);
+	VectorCopy(dir, bfg->movedir);
+	vectoangles(dir, bfg->s.angles);
+	//VectorScale(dir, speed, bfg->velocity);
+	bfg->movetype = MOVETYPE_NONE;
+	bfg->clipmask = MASK_SOLID;
+	bfg->solid = SOLID_BBOX;
+	bfg->s.effects |= EF_POWERSCREEN;
+	VectorClear(bfg->mins);
+	VectorClear(bfg->maxs);
+	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
+	bfg->owner = self;
+	bfg->touch = wormhole_touch;
+	//bfg->nextthink = level.time + 8000 / speed;
+	//bfg->think = G_FreeEdict;
+	//bfg->radius_dmg = damage;
+	//bfg->dmg_radius = damage_radius;
+	bfg->classname = "wormhole";
+	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
+
+	bfg->think = wormhole_think;
+	bfg->nextthink = level.time + FRAMETIME;
+	bfg->teammaster = bfg;
+	bfg->teamchain = NULL;
+
+	//if (self->client)
+	//	check_dodge(self, bfg->s.origin, dir, speed);
+
+	gi.linkentity(bfg);
+	return bfg;
 }
 //===============end===============

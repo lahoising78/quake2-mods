@@ -1605,7 +1605,7 @@ void Antimatter_Drop_Fire(edict_t *self, int damage)
 	VectorScale(forward, -2, self->client->kick_origin);
 	self->client->kick_angles[0] = -1;
 
-	fire_antimatter(self, start, forward, damage, 50, 400);
+	fire_antimatter(self, start, forward, damage, 75, 400);
 }
 
 //********************************
@@ -1634,6 +1634,28 @@ void Nullstar_Fire(edict_t *self)
 	self->client->kick_angles[0] = -1;
 
 	fire_nullstar(self, start, forward, damage);
+}
+
+//*********************
+//		WORMHOLE
+//*********************
+void Wormhole_Fire(edict_t *self)
+{
+	vec3_t forward;
+	vec3_t	start, end;
+	edict_t *ent1, *ent2;
+	gi.cprintf(self, PRINT_HIGH, "this is woormhole\n");
+
+	AngleVectors(self->client->v_angle, forward, NULL, NULL);
+	VectorMA(self->s.origin, 30, forward, start);
+	VectorMA(self->s.origin, 100, forward, end);
+
+	ent1 = fire_wormhole(self, start, forward);
+	ent2 = fire_wormhole(self, end, forward);
+	ent1->enemy = ent2;
+	ent2->enemy = ent1;
+
+	self->client->wf_frame[2] = 1;
 }
 //=====================end==================
 
