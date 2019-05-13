@@ -1138,7 +1138,7 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 
 	//==========mod=========
-	qboolean	radiation;
+	qboolean	effects[4];
 	//==========end==========
 
 };

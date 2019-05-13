@@ -1447,7 +1447,20 @@ void WormHole(edict_t *self)
 
 void MolecularPrime(edict_t *self)
 {
+	edict_t *ent;
+	//vec3_t dir;
 	gi.cprintf(self, PRINT_HIGH, "Calling Molecular Prime\n");
+
+	while ((ent = findradius(ent, self->s.origin, 400)) != NULL)
+	{
+		if (ent == self) continue;
+		//if (ent == self->owner) continue;
+		if (!ent->takedamage) continue;
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+
+		ent->effects[3] = true;
+	}
 }
 
 //*******************

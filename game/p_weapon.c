@@ -1545,7 +1545,7 @@ void Oberon_Fire(edict_t *self)
 	if (!(other->svflags & SVF_MONSTER) && (!other->client) && (strcmp(other->classname, "misc_explobox") != 0))
 		return;
 	T_Damage(other, self, self, forward, tr.endpos, vec3_origin, dmg, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
-	other->radiation = true;
+	other->effects[2] = true;
 	FindTarget(other);
 
 	gi.WriteByte(svc_temp_entity);
@@ -1568,7 +1568,7 @@ void Oberon_Fire(edict_t *self)
 		count++;
 		VectorSubtract(ent->s.origin, other->s.origin, forward);
 		T_Damage(ent, self, self, forward, tr.endpos, vec3_origin, dmg, 30, DAMAGE_ENERGY, MOD_BFG_BLAST | MOD_BFG_EFFECT | MOD_BFG_LASER);
-		ent->radiation = true;
+		ent->effects[2] = true;
 		FindTarget(ent);
 
 		gi.WriteByte(svc_temp_entity);
@@ -1649,7 +1649,7 @@ void Wormhole_Fire(edict_t *self)
 	AngleVectors(self->client->v_angle, forward, NULL, NULL);
 	VectorCopy(-forward, backward);
 	VectorMA(self->s.origin, 30, forward, start);
-	VectorMA(self->s.origin, 400, forward, end);
+	VectorMA(self->s.origin, 100 * self->client->range, forward, end);
 
 	ent1 = fire_wormhole(self, start, forward, 50, 100, 256);
 	ent2 = fire_wormhole(self, end, backward, 50, 100, 256);

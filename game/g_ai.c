@@ -460,11 +460,11 @@ qboolean FindTarget (edict_t *self)
 
 	//============mod============
 	monster = FindMonster(self);
-	if (monster && self->radiation)
+	if (monster && self->effects[2])
 	{
 		self->enemy = monster;
 		FoundTarget(self);
-		self->radiation = false;
+		self->effects[2] = false;
 		return true;
 	}
 	//============end============
@@ -621,10 +621,10 @@ qboolean FindTarget (edict_t *self)
 //
 // got one
 //
-	if (client == self->enemy && self->radiation)
+	if (client == self->enemy && self->effects[2])
 	{
 		self->enemy = NULL;
-		self->radiation = false;
+		self->effects[2] = false;
 		return false;
 	}
 	FoundTarget (self);

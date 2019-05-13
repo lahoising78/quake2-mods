@@ -92,6 +92,7 @@ Killed
 void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
 	//vec3_t forward = {0, 0, 0};
+	edict_t	*ent;
 	gitem_t	*it = NULL;
 	float	chance;
 
@@ -163,6 +164,15 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		return;
 	}
 	it->drop(targ, it);
+
+	if (targ->effects[3])
+	{
+		T_RadiusDamage(targ, attacker, 200, attacker, 200, MOD_BOMB);
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_GRENADE_EXPLOSION);
+		gi.WritePosition(targ->s.origin);
+		gi.multicast(targ->s.origin, MULTICAST_PHS);
+	}
 	//==============end=============
 }
 
