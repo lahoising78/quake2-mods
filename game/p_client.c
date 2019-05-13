@@ -1460,6 +1460,13 @@ void MolecularPrime(edict_t *self)
 			continue;
 
 		ent->effects[3] = true;
+		ent->s.effects |= EF_COLOR_SHELL;
+		ent->s.renderfx |= RF_SHELL_BLUE;
+
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte( TE_GRENADE_EXPLOSION );
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PHS);
 	}
 }
 
@@ -1473,9 +1480,25 @@ void Shock(edict_t *self)
 
 void Invisibility(edict_t *self)
 {
-	
+	gclient_t *cl;
 	gi.cprintf(self, PRINT_HIGH, "Calling Speed\n");
-	self->client->invisible = ~self->client->invisible;
+	if (!(self && self->client)) return;
+	cl = self->client;
+
+	if (!cl->invisible) 
+	{
+		self->client->invisible = 1;
+		cl->wf_frame[1] = (int)(1000 * cl->duration);
+		return;
+	}
+
+	cl->wf_frame[1]--;
+	if (cl->wf_frame[1] < 1)
+	{
+		cl->invisible = 0;
+		cl->wf_frame[1] = 0;
+	}
+	gi.cprintf(self, PRINT_HIGH, "invisibility frame: %d\n", cl->wf_frame[1]);
 }
 
 void ElectricShield(edict_t *self)
@@ -1495,10 +1518,19 @@ void SelectWarframe(edict_t *self)
 {
 	gclient_t *cl = self->client;
 	int i;
-	cl->strength = 1.0;
-	cl->range = 1.0;
-	cl->energy = 150;
-	cl->duration = 1.0;
+
+	if (!cl->pers.strength)
+	{
+		cl->pers.strength = 1.0;
+		cl->pers.range = 1.0;
+		cl->pers.energy = 1;
+		cl->pers.duration = 1.0;
+	}
+
+	cl->strength = cl->pers.strength;
+	cl->range = cl->pers.range;
+	cl->energy = cl->pers.energy;
+	cl->duration = cl->pers.duration;
 	cl->invisible = 0;
 
 	for (i = 0; i < 4; i++)
@@ -2014,6 +2046,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			T_RadiusDamage(ent, ent, dmg, ent, 256 * client->range, MOD_BFG_LASER);
 			
 		}
+
+		if (client->invisible) Invisibility(ent);
 	}
 	//===========end============
 }
