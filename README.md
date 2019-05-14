@@ -4,7 +4,7 @@
 <p>
 	In this mod you will be able to play as three warframe: Rhino, Nova and Volt.
 	You can choose which warframe to play by selecting the difficulty of the game.
-	To play <strong>rhino</strong>, play on easy. To play <strong>Nova</strong>, play on Medium. To play <strong>Volt</strong>, play on hard.
+	To play <strong>Rhino</strong>, play on easy. To play <strong>Nova</strong>, play on Medium. To play <strong>Volt</strong>, play on hard.
 	Note that Volt does not have all four of his original abilities.
 	Instead his 2 has been replaced with invisibility, and his 3 has been replaced with Oberon's 1.
 </p>
