@@ -386,6 +386,29 @@ void G_SetStats (edict_t *ent)
 	ent->client->ps.stats[STAT_HEALTH_ICON] = level.pic_health;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health;
 
+	//========mod=======
+	ent->client->ps.stats[18] = level.pic_health;
+	if (!ent->client->energy)
+		ent->client->energy = 150;
+	ent->client->ps.stats[19] = ent->client->energy;
+
+	if (skill->value == 2 && ent->client->invisible)
+	{
+		ent->client->ps.stats[20] = level.pic_health;
+		ent->client->ps.stats[21] = ent->client->wf_frame[1] / 10;
+	}
+	else if (skill->value == 1 && ent->client->wf_frame[2])
+	{
+		ent->client->ps.stats[20] = level.pic_health;
+		ent->client->ps.stats[21] = ent->client->wf_frame[2] / 10;
+	}
+	else
+	{
+		ent->client->ps.stats[20] = 0;
+		ent->client->ps.stats[21] = 0;
+	}
+	//========end=======
+
 	//
 	// ammo
 	//

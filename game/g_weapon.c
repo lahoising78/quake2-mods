@@ -1172,7 +1172,7 @@ void wormhole_think(edict_t *self)
 	}
 
 	VectorSubtract(self->owner->s.origin, self->s.origin, dir);
-	if (abs(VectorLength(dir)) < 10)
+	if (abs(VectorLength(dir)) < 20)
 	{
 		//VectorNormalize(dir);
 		VectorMA(self->enemy->s.origin, 30, self->movedir, self->owner->s.origin);
