@@ -1146,7 +1146,7 @@ void wormhole_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 
 void wormhole_think(edict_t *self)
 {
-	int done = 2000 * FRAMETIME; 
+	//int done = 2000 * FRAMETIME; 
 	int *frame;
 	vec3_t	dir;
 	
@@ -1160,10 +1160,10 @@ void wormhole_think(edict_t *self)
 	//self->think = G_FreeEdict;
 	self->nextthink = level.time + FRAMETIME;
 	frame = &self->owner->client->wf_frame[2];
-	*frame+=1;
+	*frame-=1;
 	gi.cprintf(self->owner, PRINT_HIGH, "frame: %d\n", *frame);
 
-	if (*frame > done)
+	if (*frame < 1)
 	{
 		*frame = 0;
 		self->think = G_FreeEdict;

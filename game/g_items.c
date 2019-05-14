@@ -1147,12 +1147,22 @@ qboolean Pickup_Warframe_Mod(edict_t *ent, edict_t *other)
 void Use_Wf_Mod(edict_t *ent, gitem_t *item)
 {
 	gclient_t *cl;
+	int i;
 
 	if (!(ent && ent->client)) return;
 	if (!(item && (item->flags & IT_WF_MOD))) return;
 	
 	gi.cprintf(ent, PRINT_HIGH, "You have atempted to use %s\n", item->pickup_name);
 	cl = ent->client;
+
+	for (i = 0; i < 4; i++)
+	{
+		if (cl->wf_frame[i])
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Cannot use a mod during an ability %d\n", i);
+			return;
+		}
+	}
 
 	if (Q_stricmp(item->pickup_name, "Intensify") == 0)
 	{

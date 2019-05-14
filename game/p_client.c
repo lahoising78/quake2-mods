@@ -1387,6 +1387,8 @@ void Roar(edict_t *self)
 	}
 
 	it->use(self, it);
+	self->client->strength += 2;
+	self->client->wf_frame[2] = -1;
 }
 
 void RhinoStomp(edict_t *self)
@@ -1413,6 +1415,7 @@ void RhinoStomp(edict_t *self)
 			if (mob->nextthink) {
 				if (self->client->firstAb == RhinoCharge) VectorAdd(mob->s.origin, knockback, mob->s.origin);
 				mob->nextthink = level.time + (5 * self->client->duration );
+				T_Damage(mob, self, self, knockback, mob->s.origin, vec3_origin, 20 * self->client->strength, 30, DAMAGE_RADIUS, MOD_EXPLOSIVE);
 			}
 		}
 	}
@@ -1425,7 +1428,7 @@ void RhinoStomp(edict_t *self)
 //****************************
 void NullStar(edict_t *self) 
 {
-	float dmg;
+	//float dmg;
 	if (!self) return;
 	if (!self->client) return;
 	gi.cprintf(self, PRINT_HIGH, "Calling Null Star %.2f\n", self->client->strength);
@@ -1451,7 +1454,7 @@ void MolecularPrime(edict_t *self)
 	//vec3_t dir;
 	gi.cprintf(self, PRINT_HIGH, "Calling Molecular Prime\n");
 
-	while ((ent = findradius(ent, self->s.origin, 400)) != NULL)
+	while ((ent = findradius(ent, self->s.origin, 100 * self->client->range)) != NULL)
 	{
 		if (ent == self) continue;
 		//if (ent == self->owner) continue;
@@ -2036,18 +2039,27 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		if (client->wf_frame[0])
 		{
-			if (client->wf_frame[0] > 5)
+			if (client->wf_frame[0] > 10)
 			{
+				client->wf_frame[0] = 0;
 				return;
 			}
 			client->wf_frame[0]++;
 
-			dmg = 120 * client->strength;
-			T_RadiusDamage(ent, ent, dmg, ent, 256 * client->range, MOD_BFG_LASER);
+			dmg = 10 * client->strength;
+			T_RadiusDamage(ent, ent, dmg, ent, 100 * client->range, MOD_BFG_LASER);
 			
 		}
 
 		if (client->invisible) Invisibility(ent);
+
+		if (client->quad_framenum <= level.framenum && client->wf_frame[2] < 0)
+		{
+			client->strength -= 2;
+			gi.cprintf(ent, PRINT_HIGH, "quad is out; strength: %.2f\n", client->strength);
+			client->wf_frame[2] = 0;
+
+		}
 	}
 	//===========end============
 }

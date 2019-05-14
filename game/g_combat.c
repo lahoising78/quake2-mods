@@ -167,7 +167,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 
 	if (targ->effects[3])
 	{
-		T_RadiusDamage(targ, attacker, 200, attacker, 200, MOD_BOMB);
+		T_RadiusDamage(targ, attacker, 20 * attacker->client->strength, attacker, 100 * attacker->client->range, MOD_BOMB);
 		gi.WriteByte(svc_temp_entity);
 		gi.WriteByte(TE_GRENADE_EXPLOSION);
 		gi.WritePosition(targ->s.origin);

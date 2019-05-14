@@ -1466,7 +1466,7 @@ void Shock_Fire(edict_t *ent)
 		hit++;
 		other = tr.ent;
 		electric_damage(other, ent, damage, 5 * ent->client->duration);
-		while ( (tar = findradius(tar, other->s.origin, 400)) != NULL )  
+		while ( (tar = findradius(tar, other->s.origin, 100 * ent->client->range)) != NULL )  
 		{
 			//check stuff
 			if (tar == other) continue;
@@ -1555,7 +1555,7 @@ void Oberon_Fire(edict_t *self)
 	gi.multicast(self->s.origin, MULTICAST_PHS);
 
 	count = 0;
-	while ( (ent = findradius(ent, other->s.origin, 10000)) != NULL )
+	while ( (ent = findradius(ent, other->s.origin, 100 * self->client->range)) != NULL )
 	{
 		if (ent == self) continue;
 		if (ent == other) continue;
@@ -1656,7 +1656,7 @@ void Wormhole_Fire(edict_t *self)
 	ent1->enemy = ent2;
 	ent2->enemy = ent1;
 
-	self->client->wf_frame[2] = 1;
+	self->client->wf_frame[2] = 200;
 }
 //=====================end==================
 
