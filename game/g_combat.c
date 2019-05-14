@@ -134,23 +134,25 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		return;
 	//AngleVectors(attacker->client->v_angle, forward, NULL, NULL);
 	//fire_bfg(targ, targ->s.origin, forward, damage, 400, 1024);
-	chance = crandom();
-	if (chance < -0.5)
+	chance = 50 * (1 + crandom());
+	if (chance < 18)
 	{
 		it = FindItem("Intensify");
 	}
-	else if (chance < 0)
+	else if (chance < 34)
 	{
 		it = FindItem("Stretch");
 	}
-	else if (chance < 0.5)
+	else if (chance < 44)
 	{
 		it = FindItem("Flow");
 	}
-	else
+	else if (chance < 60)
 	{
 		it = FindItem("Continuity");
 	}
+	else
+		it = FindItem("Energy Orb");
 
 	if (!it)
 	{

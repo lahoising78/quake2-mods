@@ -654,6 +654,16 @@ char *single_statusbar =
 "xv	50 "
 "pic 0 "
 
+//==mod==
+"if 20 "
+"	xr -58 "
+"	num 2 21 "
+"	xr -24 "
+"	pic 0 "
+"endif "
+//======end======
+//==end==
+
 // ammo
 "if 2 "
 "	xv	100 "
@@ -704,16 +714,9 @@ char *single_statusbar =
 
 //======mod======
 "if 18 "
-"	xv 0 "
+"	xr -75 "
 "	num 3 19 "
-"	xv 50"
-"	pic 0 "
-"endif "
-
-"if 20 "
-"	xr -58 "
-"	num 2 21 "
-"	xr -24 "
+"	xr -24"
 "	pic 0 "
 "endif "
 //======end======

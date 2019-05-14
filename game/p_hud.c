@@ -388,8 +388,8 @@ void G_SetStats (edict_t *ent)
 
 	//========mod=======
 	ent->client->ps.stats[18] = level.pic_health;
-	if (!ent->client->energy)
-		ent->client->energy = 150;
+	//if (!ent->client->energy)
+		//ent->client->energy = 0;
 	ent->client->ps.stats[19] = ent->client->energy;
 
 	if (skill->value == 2 && ent->client->invisible)

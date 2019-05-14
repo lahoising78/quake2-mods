@@ -1148,6 +1148,14 @@ void Use_Wf_Mod(edict_t *ent, gitem_t *item)
 {
 	gclient_t *cl;
 	int i;
+	int it;
+	enum 
+	{
+		INTENSIFY,
+		STRETCH,
+		FLOW,
+		CONTINUITY
+	};
 
 	if (!(ent && ent->client)) return;
 	if (!(item && (item->flags & IT_WF_MOD))) return;
@@ -1163,32 +1171,77 @@ void Use_Wf_Mod(edict_t *ent, gitem_t *item)
 			return;
 		}
 	}
+	i = 0;
 
 	if (Q_stricmp(item->pickup_name, "Intensify") == 0)
 	{
-		cl->strength += 0.05;
-		cl->pers.strength += 0.05;
-		gi.cprintf(ent, PRINT_HIGH, "new strength: %.2f\n", cl->strength);
+		
+		it = INTENSIFY;
+		i = ITEM_INDEX(FindItem("Intensify"));
+		
 	}
 	else if (Q_stricmp(item->pickup_name, "Stretch") == 0)
 	{
-		cl->range += 0.05;
-		cl->pers.range += 0.05;
-		gi.cprintf(ent, PRINT_HIGH, "new range: %.2f\n", cl->range);
+		
+		it = STRETCH;
+		i = ITEM_INDEX(FindItem("Stretch"));
+		
 	}
 	else if (Q_stricmp(item->pickup_name, "Flow") == 0)
 	{
-		cl->energy += 1;
-		cl->pers.energy += 1;
-		gi.cprintf(ent, PRINT_HIGH, "new energy: %d\n", cl->energy);
+		
+		it = FLOW;
+		i = ITEM_INDEX(FindItem("Flow"));
+		
 	}
 	else if (Q_stricmp(item->pickup_name, "Continuity") == 0)
 	{
+		
+		it = CONTINUITY;
+		i = ITEM_INDEX(FindItem("Continuity"));
+		
+	}
+	if (i > -1 && 1 < MAX_ITEMS)
+	{
+		if (cl->pers.inventory[i]) cl->pers.inventory[i]--;
+		else return;
+	}
+	else return;
+
+	switch (it)
+	{
+	case INTENSIFY:
+		cl->strength += 0.05;
+		cl->pers.strength += 0.05;
+		gi.cprintf(ent, PRINT_HIGH, "new strength: %.2f\n", cl->strength);
+		break;
+	case STRETCH:
+		cl->range += 0.05;
+		cl->pers.range += 0.05;
+		gi.cprintf(ent, PRINT_HIGH, "new range: %.2f\n", cl->range);
+		break;
+	case FLOW:
+		cl->energy += 1;
+		cl->pers.energy += 1;
+		gi.cprintf(ent, PRINT_HIGH, "new energy: %d\n", cl->energy);
+		break;
+	case CONTINUITY:
 		cl->duration += 0.05;
 		cl->pers.duration += 0.05;
 		gi.cprintf(ent, PRINT_HIGH, "new duration: %.2f\n", cl->duration);
+		break;
+	default:
+		break;
 	}
+}
 
+qboolean Pickup_Energy_Orb(edict_t *ent, edict_t *other)
+{
+	if (!(ent && ent->item)) return;
+	if (!(other && other->client)) return;
+	//gi.cprintf(other, PRINT_HIGH, "Picking up energy orb\n");
+	other->client->energy += ent->item->quantity;
+	other->client->pers.energy = other->client->energy;
 }
 //=============end=============
 
@@ -2252,6 +2305,27 @@ tank commander's head
 		0,
 		NULL,
 		IT_WF_MOD,
+		0,
+		NULL,
+		0,
+		/* precache */ ""
+	},
+
+	{
+		"energy_orb",
+		Pickup_Energy_Orb,
+		NULL,
+		Drop_Item,
+		NULL,
+		"items/pkup.wav",
+		"models/items/pack/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"i_pack",
+		/* pickup */	"Energy Orb",
+		/* width */		2,
+		10,
+		NULL,
+		0,
 		0,
 		NULL,
 		0,

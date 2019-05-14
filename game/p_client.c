@@ -1337,6 +1337,9 @@ void RhinoCharge(edict_t *self)
 	gclient_t *client = self->client;
 	int sc;
 	gi.cprintf(self, PRINT_HIGH, "Calling Rhino Charge\n");
+	if (client->energy < 10) return;
+	client->energy -= 10;
+	client->pers.energy = client->energy;
 	//self->client->previous_think = globals.ClientThink;
 	//globals.ClientThink = RChargeThink;
 	//self->client->charge_framenum = 0;
@@ -1358,6 +1361,9 @@ void IronSkin(edict_t *ent)
 	gitem_armor_t	*info;
 
 	gi.cprintf(ent, PRINT_HIGH, "Calling Iron Skin\n");
+	if (ent->client->energy < 40) return;
+	ent->client->energy -= 40;
+	ent->client->pers.energy = ent->client->energy;
 
 	it = FindItem("Body Armor");
 	if (ent->client->pers.inventory[ITEM_INDEX(it)]) return;
@@ -1375,6 +1381,9 @@ void Roar(edict_t *self)
 	gi.cprintf(self, PRINT_HIGH, "Calling Roar\n");
 
 	if (self->client->quad_framenum > level.framenum) return;
+	if (self->client->energy < 30) return;
+	self->client->energy -= 30;
+	self->client->pers.energy = self->client->energy;
 
 	it = FindItem("quad damage");
 	if (!it) 
@@ -1387,6 +1396,7 @@ void Roar(edict_t *self)
 	}
 
 	it->use(self, it);
+	T_RadiusDamage(self, self, 20 * self->client->strength, self, 256 * self->client->range, MOD_BOMB);
 	self->client->strength += 2;
 	self->client->wf_frame[2] = -1;
 }
@@ -1398,6 +1408,9 @@ void RhinoStomp(edict_t *self)
 	vec3_t knockback = {0,0,30};
 	
 	if (!(self && self->client)) return;
+	if (self->client->energy < 50) return;
+	self->client->energy -= 50;
+	self->client->pers.energy = self->client->energy;
 
 	if (self->client->firstAb == RhinoCharge) gi.cprintf(self, PRINT_HIGH, "Calling Rhino Stomp\n");
 	else gi.cprintf(self, PRINT_HIGH, "Calling Discharge\n");
@@ -1431,6 +1444,10 @@ void NullStar(edict_t *self)
 	//float dmg;
 	if (!self) return;
 	if (!self->client) return;
+	if (self->client->energy < 20) return;
+	self->client->energy -= 20;
+	self->client->pers.energy = self->client->energy;
+
 	gi.cprintf(self, PRINT_HIGH, "Calling Null Star %.2f\n", self->client->strength);
 	Nullstar_Fire(self);
 }
@@ -1438,12 +1455,18 @@ void NullStar(edict_t *self)
 void AntimatterDrop(edict_t *self)
 {
 	if (!(self && self->client)) return;
+	if (self->client->energy < 15) return;
+	self->client->energy -= 15;
+	self->client->pers.energy = self->client->energy;
 	gi.cprintf(self, PRINT_HIGH, "Calling Antimatter Drop\n");
 	Antimatter_Drop_Fire(self, 100 * self->client->strength);
 }
 
 void WormHole(edict_t *self)
 {
+	if (self->client->energy < 10) return;
+	self->client->energy -= 10;
+	self->client->pers.energy = self->client->energy;
 	gi.cprintf(self, PRINT_HIGH, "Calling Worm Hole\n");
 	Wormhole_Fire(self);
 }
@@ -1452,6 +1475,9 @@ void MolecularPrime(edict_t *self)
 {
 	edict_t *ent;
 	//vec3_t dir;
+	if (self->client->energy < 30) return;
+	self->client->energy -= 30;
+	self->client->pers.energy = self->client->energy;
 	gi.cprintf(self, PRINT_HIGH, "Calling Molecular Prime\n");
 
 	while ((ent = findradius(ent, self->s.origin, 100 * self->client->range)) != NULL)
@@ -1478,12 +1504,18 @@ void MolecularPrime(edict_t *self)
 //*******************
 void Shock(edict_t *self)
 {
+	if (self->client->energy < 15) return;
+	self->client->energy -= 15;
+	self->client->pers.energy = self->client->energy;
 	Shock_Fire(self);
 }
 
 void Invisibility(edict_t *self)
 {
 	gclient_t *cl;
+	if (self->client->energy < 20) return;
+	self->client->energy -= 20;
+	self->client->pers.energy = self->client->energy;
 	gi.cprintf(self, PRINT_HIGH, "Calling Speed\n");
 	if (!(self && self->client)) return;
 	cl = self->client;
@@ -1506,6 +1538,9 @@ void Invisibility(edict_t *self)
 
 void ElectricShield(edict_t *self)
 {
+	if (self->client->energy < 30) return;
+	self->client->energy -= 30;
+	self->client->pers.energy = self->client->energy;
 	Oberon_Fire(self);
 }
 

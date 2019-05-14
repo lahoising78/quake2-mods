@@ -967,7 +967,7 @@ void Cmd_Toggle_Mods_Menu(edict_t *ent, qboolean toggle)
 	}
 	//gi.cprintf(ent, PRINT_HIGH, "you have %d wf mods\n", cl->pers.inventory[ITEM_INDEX(it)]);
 
-	if (toggle) SelectNextItem(ent, IT_WF_MOD);
+	if (toggle && cl->pers.selected_item >= 0 && !(itemlist[cl->pers.selected_item].flags & IT_WF_MOD)) SelectNextItem(ent, IT_WF_MOD);
 	if (cl->pers.selected_item > -1) it = &itemlist[cl->pers.selected_item];
 	selector[cl->pers.selected_item % 42] = '*';
 	gi.cprintf(ent, PRINT_HIGH, "Item selected: %d\n", cl->pers.selected_item);
@@ -1035,6 +1035,7 @@ void Cmd_Use_Wf_Mod(edict_t *ent)
 	}
 
 	it->use(ent, it);
+	Cmd_Toggle_Mods_Menu(ent, false);
 }
 
 //================end===================
@@ -1106,8 +1107,16 @@ void ClientCommand (edict_t *ent)
 		else
 			SelectNextItem(ent, -1);
 	}
-	else if (Q_stricmp (cmd, "invprev") == 0)
-		SelectPrevItem (ent, -1);
+	else if (Q_stricmp(cmd, "invprev") == 0)
+	{
+		if (ent && ent->client && ent->client->showhelp)
+		{
+			SelectPrevItem(ent, IT_WF_MOD);
+			Cmd_Toggle_Mods_Menu(ent, false);
+		}
+		else
+			SelectPrevItem(ent, -1);
+	}
 	else if (Q_stricmp (cmd, "invnextw") == 0)
 		SelectNextItem (ent, IT_WEAPON);
 	else if (Q_stricmp (cmd, "invprevw") == 0)
