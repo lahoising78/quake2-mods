@@ -1526,7 +1526,7 @@ void SelectWarframe(edict_t *self)
 	{
 		cl->pers.strength = 1.0;
 		cl->pers.range = 1.0;
-		cl->pers.energy = 1;
+		cl->pers.energy = 150;
 		cl->pers.duration = 1.0;
 	}
 
